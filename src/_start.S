@@ -1,7 +1,7 @@
 // "I don't understand any of this, but it's from OSDev Wiki and I
-// trust it." – chrissx, after he copy-pasted non-working code
+// trust it." – chrissx, after they copy-pasted non-working code
 // "I don't understand any of this, but it's from jsandler18 and I
-// trust it." – chrissx, after he copy-pasted working code
+// trust it." – chrissx, after they copy-pasted working code
 // "This is horrible, ARM 32 <-> 64 bit differences are a fucking
 // mess, I should go back to using AArch64 code" – chrissx, after they
 // discovered, how bad jsandler18's code is for RPI3+.
