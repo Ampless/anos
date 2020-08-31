@@ -1,0 +1,21 @@
+S {
+        !aarch64-none-elf-as -c src/_start.S -o src/_start.o
+}
+
+cpp {
+        !aarch64-none-elf-g++ -ffreestanding -c src/main.cpp -o src/main.o -O2 -Wall -Wextra
+}
+
+link {
+        !aarch64-none-elf-gcc -T linker.ld -o anos.elf -ffreestanding -O2 -nostdlib src/*.o -lgcc
+}
+
+objcopy {
+        !aarch64-none-elf-objcopy anos.elf -O binary kernel8.img
+}
+
+all (S cpp link objcopy) {}
+
+test (all) {
+        !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img
+}
