@@ -7,6 +7,8 @@
 // discovered, how bad jsandler18's code is for RPI3+.
 // "ICH HAB N OBJECT FILE!" – chrissx, after fixing OSDev Wiki's code
 
+//ICH TESTE SCHEIßE
+
 .section ".text.boot"
 
 .globl _start
