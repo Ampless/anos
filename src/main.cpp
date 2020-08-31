@@ -22,7 +22,7 @@ enum {
 #elif RASPI_TARGET == 4
         MMIO_BASE    = 0xFE000000,
 #else
-        MMIO_BASE    = 0x20000000,
+#error "No, you don't want to use non RasPi 3/4 ones."
 #endif
 
         GPIO_BASE    = (MMIO_BASE + 0x200000),
@@ -65,12 +65,10 @@ void uart_init() {
         delay(150);
         mem(GPPUDCLK0) = 0;
         mem(UART0_ICR) = 0x7FF;
-#if RASPI_TARGET >= 3
         uint32_t r = (((uint64_t)(&mbox) & ~0xF) | 8);
         while(mem(MBOX_STATUS) & 0x80000000);
         mem(MBOX_WRITE) = r;
         while((mem(MBOX_STATUS) & 0x40000000) || mem(MBOX_READ) != r);
-#endif
 	mem(UART0_IBRD) = 1;
 	mem(UART0_FBRD) = 40;
 	mem(UART0_LCRH) = bit(4) | bit(5) | bit(6);
@@ -95,18 +93,11 @@ void uart_puts(const char *str) {
         }
 }
 
-extern "C"
-#ifdef AARCH64
-// arguments for AArch64
-void kernel_main(uint64_t dtb_ptr32,
-                 uint64_t x1,
-                 uint64_t x2,
-                 uint64_t x3) {
-#else
-// arguments for AArch32
-void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags) {
-#endif
-	uart_init();
-	uart_puts("Hello, kernel World!\n");
-	while(1) uart_putc(uart_getc());
+extern "C" void kernel_main(uint64_t dtb_ptr32,
+                            uint64_t x1,
+                            uint64_t x2,
+                            uint64_t x3) {
+        uart_init();
+        uart_puts("Hello, kernel World!\n");
+        while(1) uart_putc(uart_getc());
 }
