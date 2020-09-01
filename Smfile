@@ -1,21 +1,28 @@
 S {
-        !aarch64-none-elf-as -c src/_start.S -o src/_start.o
+        !aarch64-none-elf-as -c src/_start.S -g -o src/_start.o
 }
 
 cpp {
-        !aarch64-none-elf-g++ -ffreestanding -c src/main.cpp -o src/main.o -O2 -Wall -Wextra
+        !aarch64-none-elf-g++ -ffreestanding -nostdlib -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
 }
 
 link {
-        !aarch64-none-elf-gcc -T linker.ld -o anos.elf -ffreestanding -O2 -nostdlib src/*.o -lgcc
+        !aarch64-none-elf-gcc -T src/linker.ld -o anos.elf -ffreestanding -O2 -nostdlib src/*.o -lgcc
 }
 
 objcopy {
         !aarch64-none-elf-objcopy anos.elf -O binary kernel8.img
 }
 
+clean {
+        !rm -f anos.elf src/*.o
+}
+
 all (S cpp link objcopy) {}
 
 test (all) {
-        !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img
+        # Currently the display is disabled, but once we have a UI,
+        # we might want to re-enable it.
+        # Append -s and -S to be able to use gdb
+        !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img -display none
 }
