@@ -3,7 +3,7 @@ S {
 }
 
 cpp {
-        !aarch64-none-elf-g++ -ffreestanding -nostdlib -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
+        !aarch64-none-elf-gcc -ffreestanding -nostdlib -c src/main.c -g -o src/main.o -O2 -Wall -Wextra
 }
 
 link {
