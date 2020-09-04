@@ -4,6 +4,7 @@ S {
 
 cpp {
         !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
+        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/mbox.cpp -g -o src/mbox.o -O2 -Wall -Wextra
 }
 
 link {
