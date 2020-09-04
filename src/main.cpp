@@ -1,4 +1,4 @@
-#include <cstdint>
+#include "stdint.h"
 #include "../config.h"
 
 #define spinwhile(b) while(b) asm volatile("nop")
