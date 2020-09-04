@@ -9,33 +9,30 @@
 
 .section ".text.boot"
 
-.globl _start
-
-.org 0x80000
+.global _start
 
 _start:
         // read cpu id, stop slave cores
         mrs x1, mpidr_el1
         and x1, x1, #3
-        cbnz x1, 1f
-
-        // grow stack from 0x80000 downwards
-        ldr x5, =_start
-        mov sp, x5
-
-        // this clears the bss
-        //(apparently we want that, idk enough about this)
-        ldr x5, =__bss_start
-        ldr w6, =__bss_size
-3:      cbz w6, 4f
-        str xzr, [x5], #8
-        sub w6, w6, #1
-        cbnz w6, 3b
-
-        // on core 0 run kernel_main, on the others do nothing
-4:      b kmain
-
-        // while(1);
+        cbz x1, 2f
+        // cpu id > 0, stop
 1:      wfe
+        b 1b
+2:      // cpu id == 0
+
+        // set stack before our code
+        ldr x1, =_start
+        mov sp, x1
+
+        // clear bss
+        ldr x1, =__bss_start
+        ldr w2, =__bss_size
+3:      cbz w2, 4f
+        str xzr, [x1], #8
+        sub w2, w2, #1
+        cbnz w2, 3b
+
+4:      bl kmain
         b 1b
 
