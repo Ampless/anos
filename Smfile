@@ -1,9 +1,9 @@
 S {
-        !aarch64-none-elf-as -c src/_start.S -g -o src/_start.o
+        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdlib -nostartfiles -c src/_start.S -g -o src/_start.o
 }
 
 cpp {
-        !aarch64-none-elf-g++ -ffreestanding -nostdlib -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
+        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdlib -nostartfiles -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
 }
 
 link {
