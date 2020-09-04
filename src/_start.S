@@ -14,10 +14,17 @@
 .org 0x80000
 
 _start:
+        // read cpu id, stop slave cores
+        mrs x1, mpidr_el1
+        and x1, x1, #3
+        cbnz x1, 1f
+
         // grow stack from 0x80000 downwards
         ldr x5, =_start
         mov sp, x5
 
+        // this clears the bss
+        //(apparently we want that, idk enough about this)
         ldr x5, =__bss_start
         ldr w6, =__bss_size
 3:      cbz w6, 4f
@@ -26,7 +33,9 @@ _start:
         cbnz w6, 3b
 
         // on core 0 run kernel_main, on the others do nothing
-4:      bl kmain
+4:      b kmain
+
+        // while(1);
 1:      wfe
         b 1b
 
