@@ -1,9 +1,9 @@
 S {
-        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/_start.S -g -o src/_start.o
+        !aarch64-none-elf-gcc -ffreestanding -nostdinc -nostdlib -nostartfiles -c src/_start.S -g -o src/_start.o
 }
 
-cpp {
-        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
+c {
+        !aarch64-none-elf-gcc -ffreestanding -nostdinc -nostdlib -nostartfiles -c src/main.c -g -o src/main.o -O2 -Wall -Wextra
 }
 
 link {
@@ -18,7 +18,7 @@ clean {
         !rm -f anos.elf src/*.o
 }
 
-all (S cpp link objcopy) {}
+all (S c link objcopy) {}
 
 test (all) {
         # Currently the display is disabled, but once we have a UI,
