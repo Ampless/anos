@@ -3,12 +3,11 @@
 extern "C" void kmain()
 {
         uint64_t start = rdtsc();
-        // set up serial console
         uart_init();
 
-        // get the board's unique serial number with a mailbox call
+        // get the serial number with a mailbox call
         mbox[0] = 8*4;                  // length of the message
-        mbox[1] = MBOX_REQUEST;         // this is a request message
+        mbox[1] = MBOX_REQUEST;
 
         mbox[2] = MBOX_TAG_GETSERIAL;   // get serial number command
         mbox[3] = 8;                    // buffer size
@@ -45,6 +44,8 @@ extern "C" void kmain()
         wait_usec_st(1000000);
         uart_puts("0 done.");
 
-        // echo everything back
+        gpu_init();
+        gpu_showpicture();
+
         while(1) uart_putc(uart_getc());
 }

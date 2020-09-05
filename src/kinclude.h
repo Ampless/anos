@@ -178,6 +178,9 @@ namespace {
 #define MBOX_RESPONSE   0x80000000
 #define MBOX_FULL       0x80000000
 #define MBOX_EMPTY      0x40000000
+#define MBOX_TAG_SETPOWER       0x28001
+#define MBOX_TAG_SETCLKRATE     0x38002
+#define MBOX_TAG_LAST           0
 
 #define RNG_CTRL        mem(MMIO_BASE+0x00104000)
 #define RNG_STATUS      mem(MMIO_BASE+0x00104004)
@@ -187,7 +190,11 @@ namespace {
 #define SYSTMR_LO mem(MMIO_BASE+0x00003004)
 #define SYSTMR_HI mem(MMIO_BASE+0x00003008)
 
-#define spincycles(n) if(n) spinwhile(n--);
+#define PM_RSTC         mem(MMIO_BASE+0x0010001c)
+#define PM_RSTS         mem(MMIO_BASE+0x00100020)
+#define PM_WDOG         mem(MMIO_BASE+0x00100024)
+#define PM_WDOG_MAGIC   0x5a000000
+#define PM_RSTC_FULLRST 0x00000020
 
 namespace {
         void srand() {
@@ -203,6 +210,10 @@ namespace {
 
         int rand(int min, int max) {
                 return rand() % (max - min) + min;
+        }
+
+        void spincycles(int n) {
+                if(n) spinwhile(n--);
         }
 
         volatile long get_system_timer()
@@ -221,5 +232,140 @@ namespace {
         {
                 long t = get_system_timer();
                 if(t) while(get_system_timer() < t+n);
+        }
+
+        void shutdown(bool restart)
+        {
+
+                long r;
+
+                if(!restart) {
+                        for(r=0;r<16;r++) {
+                                mbox[0]=8*4;
+                                mbox[1]=MBOX_REQUEST;
+                                mbox[2]=MBOX_TAG_SETPOWER;
+                                mbox[3]=8;
+                                mbox[4]=8;
+                                mbox[5]=(int)r;
+                                mbox[6]=0;
+                                mbox[7]=MBOX_TAG_LAST;
+                                mbox_call(MBOX_CH_PROP);
+                        }
+
+                        GPFSEL0 = 0;
+                        GPFSEL1 = 0;
+                        GPFSEL2 = 0;
+                        GPFSEL3 = 0;
+                        GPFSEL4 = 0;
+                        GPFSEL5 = 0;
+                        GPPUD = 0;
+                        spincycles(150);
+                        GPPUDCLK0 = 0xffffffff;
+                        GPPUDCLK1 = 0xffffffff;
+                        spincycles(150);
+                        GPPUDCLK0 = 0;
+                        GPPUDCLK1 = 0;
+                }
+
+                r = PM_RSTS;
+                r &= ~0xfffffaaa;
+                if(!restart) r |= 0x555;
+                PM_RSTS = PM_WDOG_MAGIC | r;
+                PM_WDOG = PM_WDOG_MAGIC | 10;
+                PM_RSTC = PM_WDOG_MAGIC | PM_RSTC_FULLRST;
+        }
+
+
+        struct {
+                uint32_t width, height, pitch;
+                uint8_t *buffer;
+        } framebuffer;
+
+#include "image.h"
+
+        //Sets screen resolution to 1024x768
+        //(will we a param later)
+        bool gpu_init()
+        {
+                mbox[0] = 35*4;
+                mbox[1] = MBOX_REQUEST;
+
+                mbox[2] = 0x48003; //set physical width & height
+                mbox[3] = 8;
+                mbox[4] = 8;
+                mbox[5] = 1024; //w
+                mbox[6] = 768; //h
+
+                mbox[7] = 0x48004; //set virtual width & height
+                mbox[8] = 8;
+                mbox[9] = 8;
+                mbox[10] = 1024; //w
+                mbox[11] = 768; //h
+
+                mbox[12] = 0x48009; //set virtual offset
+                mbox[13] = 8;
+                mbox[14] = 8;
+                mbox[15] = 0; //x
+                mbox[16] = 0; //y
+
+                mbox[17] = 0x48005; //set depth
+                mbox[18] = 4;
+                mbox[19] = 4;
+                mbox[20] = 32; //bits
+
+                mbox[21] = 0x48006; //set pixel order
+                mbox[22] = 4;
+                mbox[23] = 4;
+                mbox[24] = 1; //RGB
+
+                mbox[25] = 0x40001; //get framebuffer & alignment
+                mbox[26] = 8;
+                mbox[27] = 8;
+                mbox[28] = 4096; //pointer
+                mbox[29] = 0; //size
+
+                mbox[30] = 0x40008; //get pitch
+                mbox[31] = 4;
+                mbox[32] = 4;
+                mbox[33] = 0; //pitch
+
+                mbox[34] = MBOX_TAG_LAST;
+
+                if(mbox_call(MBOX_CH_PROP) && mbox[20]==32 && mbox[28]!=0) {
+                        mbox[28]&=0x3FFFFFFF; //GPU has different addresses, idk
+                        framebuffer.width=mbox[5];
+                        framebuffer.height=mbox[6];
+                        framebuffer.pitch=mbox[33]; //number of bytes per line
+                        if(!mbox[24]) return false; //BGR is an error.
+                        framebuffer.buffer=(uint8_t *)((uintptr_t)mbox[28]);
+                        return true;
+                }
+                uart_puts("Can't set screen res (1024x768x32)\n");
+                return false;
+        }
+
+        /**
+         * Show the #included picture
+         */
+        void gpu_showpicture()
+        {
+                uint32_t x,y;
+                uint8_t *ptr=framebuffer.buffer;
+                char *data=header_data, pixel[4];
+                uint32_t h = framebuffer.height;
+                uint32_t w = framebuffer.width;
+                uint32_t p = framebuffer.pitch;
+                uint32_t iw = width;
+                uint32_t ih = height;
+
+                ptr += (h - ih) / 2 * p + (w - iw) * 2;
+                for(y=0;y<h;y++) {
+                        for(x=0;x<w;x++) {
+                                HEADER_PIXEL(data, pixel);
+                                *((uint32_t*)ptr)=*((uint32_t *)&pixel);
+                                ptr+=4;
+                        }
+                        ptr+=p-w*4;
+                }
         }
 }

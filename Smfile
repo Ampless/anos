@@ -19,11 +19,11 @@ clean {
         !rm -f anos.elf src/*.o
 }
 
-all (S cpp link objcopy) {}
+all (S cpp link objcopy clean) {}
 
 test (all) {
         # Currently the display is disabled, but once we have a UI,
         # we might want to re-enable it.
         # Append -s and -S to be able to use gdb
-        !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img -display none
+        !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img
 }
