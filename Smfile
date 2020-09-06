@@ -4,7 +4,7 @@ S {
 
 cpp {
         %SET CPPC aarch64-none-elf-g++
-        %APPEND CPPFLAGS -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
+        %APPEND CPPFLAGS -Wno-return-type -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
         %CPPC src/main.o src/main.cpp
         %CPPC src/raspi/mbox.o src/raspi/mbox.cpp
         %CPPC src/raspi/gpu.o src/raspi/gpu.cpp
@@ -32,4 +32,10 @@ test (all) {
         # we might want to re-enable it.
         # Append -s and -S to be able to use gdb
         !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img
+}
+
+image2rle {
+        %CC image2rle tooling/image2rle.c
+        !./image2rle > image.rle
+        !rm -f image2rle
 }
