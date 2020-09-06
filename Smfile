@@ -1,16 +1,18 @@
 S {
-        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/_start.S -g -o src/_start.o
+        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/_start.S -o src/_start.o
 }
 
 cpp {
         %SET CPPC aarch64-none-elf-g++
-        %APPEND CPPFLAGS -Wno-ignored-qualifiers -Wno-unused-function -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
+        %APPEND CPPFLAGS -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
         %CPPC src/main.o src/main.cpp
-        %CPPC src/mbox.o src/mbox.cpp
+        %CPPC src/raspi/mbox.o src/raspi/mbox.cpp
+        %CPPC src/raspi/gpu.o src/raspi/gpu.cpp
+        %CPPC src/raspi/uart0.o src/raspi/uart0.cpp
 }
 
 link {
-        !aarch64-none-elf-ld -T src/linker.ld -o anos.elf src/*.o
+        !aarch64-none-elf-ld -T src/linker.ld -o anos.elf src/*.o src/*/*.o
 }
 
 objcopy {
@@ -21,7 +23,9 @@ clean {
         !rm -f anos.elf src/*.o
 }
 
-all (S cpp link objcopy clean) {}
+elf (S cpp link) {}
+img (elf objcopy) {}
+all (img clean) {}
 
 test (all) {
         # Currently the display is disabled, but once we have a UI,

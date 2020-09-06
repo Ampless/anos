@@ -1,5 +1,5 @@
-static uint32_t width = 1024;
-static uint32_t height = 768;
+static uint32_t image_width = 1024;
+static uint32_t image_height = 768;
 
 #define HEADER_PIXEL(data, pixel) {\
 pixel[0] = (((data[0] - 33) << 2) | ((data[1] - 33) >> 4)); \

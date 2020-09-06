@@ -34,8 +34,12 @@ extern "C" void kmain()
         //to wait for sth in gpu_init, because it segfaults in qemu
         usleep(1000000);
 
-        gpu_init();
-        gpu_showpicture();
+        GPU gpu;
+        if(!gpu.valid()) {
+                uart_puts("GPU wasn't initialized properly.\n");
+                spinwhile(1);
+        }
+        gpu.showpicture();
 
         for(uint32_t x = 0; x < gpu.width; x++)
                 for(uint32_t y = 0; y < gpu.height; y++)
