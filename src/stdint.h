@@ -20,7 +20,9 @@ typedef unsigned long long uint64_t;
 #if defined(__aarch64__) || defined(__amd64__)
 typedef int64_t intptr_t;
 typedef uint64_t uintptr_t;
+typedef uint64_t size_t;
 #else
 typedef int32_t intptr_t;
 typedef uint32_t uintptr_t;
+typedef uint32_t size_t;
 #endif
