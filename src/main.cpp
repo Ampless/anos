@@ -2,7 +2,7 @@
 
 extern "C" void kmain()
 {
-        uint64_t start = rdtsc();
+        uint64_t start = get_system_timer();
         uart_init();
 
         // get the serial number with a mailbox call
@@ -25,31 +25,27 @@ extern "C" void kmain()
                 uart_putc('\n');
         } else uart_puts("Unable to query serial!\n");
 
-        uint64_t end = rdtsc();
-
-        uart_puts("All of this took ");
-        hex(end - start);
-        uart_puts(" cycles.\n");
-
         srand();
         uart_puts("Random number: ");
         hex(rand());
         uart_putc('\n');
 
-        uart_putc('3');
-        wait_usec_st(1000000);
-        uart_putc('2');
-        wait_usec_st(1000000);
-        uart_putc('1');
-        wait_usec_st(1000000);
-        uart_puts("0 done.");
+        //i really want to get rid of this, but it seems like i forgot
+        //to wait for sth in gpu_init, because it segfaults in qemu
+        usleep(1000000);
 
         gpu_init();
         gpu_showpicture();
 
-        for(int x = 100; x < 200; x++)
-                for(int y = 100; y < 200; y++)
-                        gpu_drawpixel(x, y, x, y, 0);
+        for(uint32_t x = 0; x < gpu.width; x++)
+                for(uint32_t y = 0; y < gpu.height; y++)
+                        gpu.pixel(x, y) = rand();
+
+        uint64_t end = get_system_timer();
+
+        uart_puts("All of this took ");
+        hex(end - start - 1000000);
+        uart_puts(" microseconds.\n");
 
         while(1) uart_putc(uart_getc());
 }

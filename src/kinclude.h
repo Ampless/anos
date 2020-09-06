@@ -222,9 +222,8 @@ namespace {
 
         volatile uint64_t get_system_timer()
         {
-                uint32_t h=-1, l;
-                h=SYSTMR_HI;
-                l=SYSTMR_LO;
+                uint32_t h=SYSTMR_HI;
+                uint32_t l=SYSTMR_LO;
                 if(h!=SYSTMR_HI) {
                         h=SYSTMR_HI;
                         l=SYSTMR_LO;
@@ -232,7 +231,7 @@ namespace {
                 return ((uint64_t) h << 32) | l;
         }
 
-        void wait_usec_st(uint64_t n)
+        void usleep(uint64_t n)
         {
                 uint64_t t = get_system_timer();
                 if(t) while(get_system_timer() < t+n);
@@ -279,10 +278,21 @@ namespace {
         }
 
 
-        struct {
-                uint32_t width, height, pitch;
-                uint8_t *buffer;
-        } framebuffer;
+        class {
+                public:
+                        uint32_t width, height, pitch;
+                        uint8_t *buffer;
+                        inline uint32_t &pixel(uint32_t x, uint32_t y) {
+                                return *(uint32_t*)&buffer[y*pitch+x*4];
+                        }
+
+                        inline void drawpixel(int x, int y, int r, int g, int b) {
+                                uint8_t *p = &buffer[y*pitch+x*4];
+                                p[0] = r;
+                                p[1] = g;
+                                p[2] = b;
+                        }
+        } gpu;
 
 #include "image.h"
 
@@ -336,11 +346,11 @@ namespace {
 
                 if(mbox_call(MBOX_CH_PROP) && mbox[20]==32 && mbox[28]!=0) {
                         mbox[28]&=0x3FFFFFFF; //GPU has different addresses, idk
-                        framebuffer.width=mbox[5];
-                        framebuffer.height=mbox[6];
-                        framebuffer.pitch=mbox[33]; //number of bytes per line
+                        gpu.width=mbox[5];
+                        gpu.height=mbox[6];
+                        gpu.pitch=mbox[33]; //number of bytes per line
                         if(!mbox[24]) return false; //BGR is an error.
-                        framebuffer.buffer=(uint8_t *)((uintptr_t)mbox[28]);
+                        gpu.buffer=(uint8_t *)((uintptr_t)mbox[28]);
                         return true;
                 }
                 uart_puts("Can't set screen res (1024x768x32)\n");
@@ -353,12 +363,12 @@ namespace {
         void gpu_showpicture()
         {
                 uint32_t x,y;
-                uint8_t *ptr=framebuffer.buffer;
+                uint8_t *ptr=gpu.buffer;
                 const char *data=header_data;
                 char pixel[4];
-                uint32_t h = framebuffer.height;
-                uint32_t w = framebuffer.width;
-                uint32_t p = framebuffer.pitch;
+                uint32_t h = gpu.height;
+                uint32_t w = gpu.width;
+                uint32_t p = gpu.pitch;
                 uint32_t iw = width;
                 uint32_t ih = height;
 
@@ -371,12 +381,5 @@ namespace {
                         }
                         ptr+=p-w*4;
                 }
-        }
-
-        void gpu_drawpixel(int x, int y, int r, int g, int b) {
-                uint8_t *p = &framebuffer.buffer[y*framebuffer.pitch+x*4];
-                p[0] = r;
-                p[1] = g;
-                p[2] = b;
         }
 }
