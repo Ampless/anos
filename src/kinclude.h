@@ -25,19 +25,24 @@ typedef int32_t intptr_t;
 typedef uint32_t uintptr_t;
 #endif
 
-#define spinwhile(b) while(b) asm volatile("nop")
+#define spinwhile(b) while(b) cpu_relax()
 
 namespace {
-        volatile uint32_t &mem(const uintptr_t loc) {
+        inline void cpu_relax() {
+                // this is 1:1 the code a small not big nor
+                // professional (unlike gnu) project called linux uses
+                asm volatile("yield" ::: "memory");
+        }
+        inline volatile uint32_t &mem(const uintptr_t loc) {
                 return *reinterpret_cast<uint32_t *>(loc);
         }
-        volatile uint64_t rdtsc() {
+        inline volatile uint64_t rdtsc() {
                 uint64_t i;
                 asm volatile ("isb; mrs %0, cntvct_el0" : "=r" (i));
                 return i;
         }
         // note: this is not always accurate
-        volatile uint64_t cpufrequency() {
+        inline volatile uint64_t cpufrequency() {
                 uint64_t i;
                 asm volatile ("isb; mrs %0, cntfrq_el0" : "=r" (i));
                 return i;
