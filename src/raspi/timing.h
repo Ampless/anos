@@ -34,4 +34,11 @@ namespace {
                 uint64_t t = get_system_timer();
                 if(t) while(get_system_timer() < t+n);
         }
+        inline volatile uint64_t rdtsc() {
+                asm volatile ("isb; mrs x0, cntvct_el0");
+        }
+        // note: this is not always accurate
+        inline volatile uint64_t cpufrequency() {
+                asm volatile ("isb; mrs x0, cntfrq_el0");
+        }
 }
