@@ -20,7 +20,7 @@ objcopy {
 }
 
 clean {
-        !rm -f anos.elf src/*.o
+        !rm -f anos.elf src/*.o src/*/*.o
 }
 
 elf (S cpp link) {}

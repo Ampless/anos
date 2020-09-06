@@ -1,4 +1,7 @@
+#pragma once
+
 #include "config.h"
+
 #if RASPI_TARGET == 3
 # define MMIO_BASE 0x3F000000
 #elif RASPI_TARGET == 4
@@ -6,6 +9,7 @@
 #else
 # error "Get yourself a RasPi 3/4!"
 #endif
+
 #undef RASPI_TARGET
 
 #define GPFSEL0         mem(MMIO_BASE+0x200000)

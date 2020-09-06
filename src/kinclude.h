@@ -4,6 +4,8 @@
 
 #include "klib.h"
 
+#include "raspi/timing.h"
+
 namespace {
         inline volatile uint64_t rdtsc() {
                 asm volatile ("isb; mrs x0, cntvct_el0");
@@ -20,14 +22,7 @@ namespace {
 
 #include "raspi/uart0.h"
 
-
-#define RNG_CTRL        mem(MMIO_BASE+0x00104000)
-#define RNG_STATUS      mem(MMIO_BASE+0x00104004)
-#define RNG_DATA        mem(MMIO_BASE+0x00104008)
-#define RNG_INT_MASK    mem(MMIO_BASE+0x00104010)
-
-#define SYSTMR_LO mem(MMIO_BASE+0x00003004)
-#define SYSTMR_HI mem(MMIO_BASE+0x00003008)
+#include "raspi/rand.h"
 
 #define PM_RSTC         mem(MMIO_BASE+0x0010001c)
 #define PM_RSTS         mem(MMIO_BASE+0x00100020)
@@ -36,41 +31,6 @@ namespace {
 #define PM_RSTC_FULLRST 0x00000020
 
 namespace {
-        void srand() {
-                RNG_STATUS = 0x40000;
-                RNG_INT_MASK |= 1;
-                RNG_CTRL |= 1;
-                spinwhile(!(RNG_STATUS >> 24));
-        }
-
-        int rand() {
-                return RNG_DATA;
-        }
-
-        int rand(int min, int max) {
-                return rand() % (max - min) + min;
-        }
-
-        void spincycles(int n) {
-                if(n) spinwhile(n--);
-        }
-
-        volatile uint64_t get_system_timer()
-        {
-                uint32_t h=SYSTMR_HI;
-                uint32_t l=SYSTMR_LO;
-                if(h!=SYSTMR_HI) {
-                        h=SYSTMR_HI;
-                        l=SYSTMR_LO;
-                }
-                return ((uint64_t) h << 32) | l;
-        }
-
-        void usleep(uint64_t n)
-        {
-                uint64_t t = get_system_timer();
-                if(t) while(get_system_timer() < t+n);
-        }
 
         void shutdown(bool restart)
         {
