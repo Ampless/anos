@@ -3,12 +3,14 @@ S {
 }
 
 cpp {
-        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/main.cpp -g -o src/main.o -O2 -Wall -Wextra
-        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/mbox.cpp -g -o src/mbox.o -O2 -Wall -Wextra
+        %SET CPPC aarch64-none-elf-g++
+        %APPEND CPPFLAGS -Wno-ignored-qualifiers -Wno-unused-function -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
+        %CPPC src/main.o src/main.cpp
+        %CPPC src/mbox.o src/mbox.cpp
 }
 
 link {
-        !aarch64-none-elf-gcc -T src/linker.ld -o anos.elf -ffreestanding -O2 -nostdlib src/*.o -lgcc
+        !aarch64-none-elf-ld -T src/linker.ld -o anos.elf src/*.o
 }
 
 objcopy {
