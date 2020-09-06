@@ -47,5 +47,9 @@ extern "C" void kmain()
         gpu_init();
         gpu_showpicture();
 
+        for(int x = 100; x < 200; x++)
+                for(int y = 100; y < 200; y++)
+                        gpu_drawpixel(x, y, x, y, 0);
+
         while(1) uart_putc(uart_getc());
 }

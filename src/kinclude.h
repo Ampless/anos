@@ -108,8 +108,7 @@ int mbox_call(char ch);
 #define UART0_ICR       mem(MMIO_BASE+0x00201044)
 
 namespace {
-        void uart_init()
-        {
+        void uart_init() {
                 int r;
 
                 /* initialize UART */
@@ -155,7 +154,7 @@ namespace {
                 return UART0_DR;
         }
 
-        void uart_puts(char *s) {
+        void uart_puts(const char *s) {
                 while(*s) uart_putc(*s++);
         }
 
@@ -221,7 +220,7 @@ namespace {
                 if(n) spinwhile(n--);
         }
 
-        volatile long get_system_timer()
+        volatile uint64_t get_system_timer()
         {
                 uint32_t h=-1, l;
                 h=SYSTMR_HI;
@@ -233,15 +232,14 @@ namespace {
                 return ((uint64_t) h << 32) | l;
         }
 
-        void wait_usec_st(int n)
+        void wait_usec_st(uint64_t n)
         {
-                long t = get_system_timer();
+                uint64_t t = get_system_timer();
                 if(t) while(get_system_timer() < t+n);
         }
 
         void shutdown(bool restart)
         {
-
                 long r;
 
                 if(!restart) {
@@ -356,7 +354,8 @@ namespace {
         {
                 uint32_t x,y;
                 uint8_t *ptr=framebuffer.buffer;
-                char *data=header_data, pixel[4];
+                const char *data=header_data;
+                char pixel[4];
                 uint32_t h = framebuffer.height;
                 uint32_t w = framebuffer.width;
                 uint32_t p = framebuffer.pitch;
@@ -372,5 +371,12 @@ namespace {
                         }
                         ptr+=p-w*4;
                 }
+        }
+
+        void gpu_drawpixel(int x, int y, int r, int g, int b) {
+                uint8_t *p = &framebuffer.buffer[y*framebuffer.pitch+x*4];
+                p[0] = r;
+                p[1] = g;
+                p[2] = b;
         }
 }
