@@ -6,9 +6,11 @@ cpp {
         %SET CPPC aarch64-none-elf-g++
         %APPEND CPPFLAGS -Wno-return-type -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
         %CPPC src/main.o src/main.cpp
+        %CPPC src/printf.o src/printf.cpp
         %CPPC src/raspi/mbox.o src/raspi/mbox.cpp
         %CPPC src/raspi/gpu.o src/raspi/gpu.cpp
         %CPPC src/raspi/uart0.o src/raspi/uart0.cpp
+        #%CPPC src/sft/schrift.o src/sft/schrift.cpp
 }
 
 link {

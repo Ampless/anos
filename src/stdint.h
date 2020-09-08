@@ -26,3 +26,5 @@ typedef int32_t intptr_t;
 typedef uint32_t uintptr_t;
 typedef uint32_t size_t;
 #endif
+
+#define NULL nullptr

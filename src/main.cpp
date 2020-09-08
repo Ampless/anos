@@ -1,7 +1,10 @@
 #include "kinclude.h"
+//#include "sft/schrift.h"
 
-extern "C" void kmain()
-{
+extern "C" void kmain(uint64_t dtb_ptr32,
+                      uint64_t x1,
+                      uint64_t x2,
+                      uint64_t x3) {
         uint64_t start = get_system_timer();
         uart_init();
 
@@ -18,17 +21,13 @@ extern "C" void kmain()
         mbox[7] = MBOX_TAG_LAST;
 
         // send the message to the GPU and receive answer
-        if (mbox_call(MBOX_CH_PROP)) {
-                uart_puts("My serial number is: ");
-                hex(mbox[6]);
-                hex(mbox[5]);
-                uart_putc('\n');
-        } else uart_puts("Unable to query serial!\n");
+        if (mbox_call(MBOX_CH_PROP))
+                printf("My serial number is: "
+                       "%x%x\n", mbox[6], mbox[5]);
+        else uart_puts("Unable to query serial!\n");
 
         srand();
-        uart_puts("Random number: ");
-        hex(rand());
-        uart_putc('\n');
+        printf("Random number: %8x\n", rand());
 
         //i really want to get rid of this, but it seems like i forgot
         //to wait for sth in gpu_init, because it segfaults in qemu
@@ -43,13 +42,29 @@ extern "C" void kmain()
 
         for(uint32_t x = 0; x < gpu.width; x++)
                 for(uint32_t y = 0; y < gpu.height; y++)
-                        gpu.pixel(x, y) = rand();
+                        gpu.drawpixel(x, y, x, y, rand());
 
         uint64_t end = get_system_timer();
 
         uart_puts("All of this took ");
         hex(end - start - 1000000);
         uart_puts(" microseconds.\n");
+
+        uint32_t ass = x1 & 0xf;
+        uart_puts("physical address space: ");
+        uart_puts(ass == 0 ? "32" :
+                  ass == 1 ? "36" :
+                  ass == 2 ? "40" :
+                  ass == 3 ? "42" :
+                  ass == 4 ? "44" :
+                  ass == 5 ? "48" :
+                  ass == 6 ? "52" : "unknown");
+        uart_putc('\n');
+
+        printf("hello, %d you idiot\n"
+               "%8x\n"
+               "%4d\n"
+               "%s\n", 1337, 0xC0FFEE, 12, "kekw");
 
         while(1) uart_putc(uart_getc());
 }
