@@ -1,6 +1,6 @@
 #pragma once
 #include "../stdint.h"
-#include "../klib.h"
+#include "../mem.h"
 #include "mmio.h"
 
 #define spinwhile(b) while(b) cpu_relax()

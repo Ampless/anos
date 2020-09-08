@@ -7,6 +7,9 @@
 // discovered, how bad jsandler18's code is for RPI3+.
 // "ICH HAB N OBJECT FILE!" – chrissx, after fixing OSDev Wiki's code
 
+// there are many ways of achieving the same thing in the boot code,
+// but this seems to work in qemu.
+
 .section ".text.boot"
 
 .global _start
@@ -33,6 +36,7 @@ _start:
         sub w2, w2, #1
         cbnz w2, 3b
 
-4:      bl kmain
+4:      mrs x1, ID_AA64MMFR0_EL1
+        bl kmain
         b 1b
 

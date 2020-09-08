@@ -1,8 +1,14 @@
 #pragma once
 #include "stdint.h"
+#include "raspi/timing.h"
 
 namespace {
-        inline volatile uint32_t &mem(const uintptr_t loc) {
-                return *reinterpret_cast<uint32_t *>(loc);
+        inline void abort() {
+                spinwhile(1);
         }
 }
+
+#define __progname "anOS"
+#include "assert.h"
+
+#include "mem.h"

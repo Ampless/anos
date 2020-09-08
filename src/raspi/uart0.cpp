@@ -51,6 +51,7 @@ void uart_init() {
 }
 
 void uart_putc(int c) {
+        if(!c) return;
         spinwhile(UART0_FR&0x20);
         UART0_DR=c;
 }
