@@ -13,7 +13,7 @@ namespace {
                 // this is 1:1 the code a small not big nor
                 // professional (unlike gnu) project called linux uses
                 // (i have actually looked up what arm says, yield
-                //  is for and using it seems fine to me)
+                //  is for, and using it seems fine to me)
                 asm volatile("yield" ::: "memory");
         }
         void spincycles(int n) {
