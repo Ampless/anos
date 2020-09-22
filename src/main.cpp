@@ -61,10 +61,12 @@ extern "C" void kmain(uint64_t dtb_ptr32,
                   ass == 6 ? "52" : "unknown");
         uart_putc('\n');
 
-        printf("hello, %d you idiot\n"
-               "%8x\n"
-               "%4d\n"
-               "%s\n", 1337, 0xC0FFEE, 12, "kekw");
+        x1 >>= 20;
+        printf("16k granules %ssupported.\n", x1 & 0xf ? "" : "not ");
+        x1 >>= 4;
+        printf("64k granules %ssupported.\n", x1 & 0xf ? "not " : "");
+        x1 >>= 4;
+        printf("4k granules %ssupported.\n", x1 & 0xf ? "not " : "");
 
         while(1) uart_putc(uart_getc());
 }
