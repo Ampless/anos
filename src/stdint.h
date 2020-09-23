@@ -21,10 +21,12 @@ typedef unsigned long long uint64_t;
 typedef int64_t intptr_t;
 typedef uint64_t uintptr_t;
 typedef uint64_t size_t;
+typedef int64_t ssize_t;
 #else
 typedef int32_t intptr_t;
 typedef uint32_t uintptr_t;
 typedef uint32_t size_t;
+typedef int32_t ssize_t;
 #endif
 
 #define NULL nullptr
