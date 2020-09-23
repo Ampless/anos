@@ -22,7 +22,7 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         // send the message to the GPU and receive answer
         if (mbox_call(MBOX_CH_PROP))
                 printf("My serial number is: "
-                       "%x%x\n", mbox[6], mbox[5]);
+                       "%8x%8x\n", mbox[6], mbox[5]);
         else uart_puts("Unable to query serial!\n");
 
         srand();
@@ -43,18 +43,16 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         uint64_t end = get_system_timer();
 
         uart_puts("All of this took ");
-        printf("%d", end - start - 1000000);
-        uart_puts(" microseconds.\n");
+        printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
 
         uint32_t ass = x1 & 0xf;
         uart_puts("physical address space: ");
-        uart_puts(ass == 0 ? "32" :
-                  ass == 1 ? "36" :
-                  ass == 2 ? "40" :
-                  ass == 3 ? "42" :
-                  ass == 4 ? "44" :
-                  ass == 5 ? "48" :
-                  ass == 6 ? "52" : "unknown");
+        if(ass <= 6)
+                printf("%d bits", 32 + (
+                       ass == 0 ? 0 :  ass == 1 ? 4 :
+                       ass == 2 ? 8 :  ass == 3 ? 10 :
+                       ass == 4 ? 12 : ass == 5 ? 16 : 20));
+        else uart_puts("unknown");
         uart_putc('\n');
 
         x1 >>= 20;

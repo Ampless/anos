@@ -4,7 +4,8 @@
 #define PAGE_SIZE    (4096)
 #define PAGE_COUNT   (MEMORY_SIZE / PAGE_SIZE)
 #define FIRST_PAGE   ((16 * 1024 * 1024) / PAGE_SIZE)
-#define PAGE2ADDR(x) ((void *)((uintptr_t)(x) * PAGE_SIZE))
+#define PAGE2ADDR(x) ((void *)((x) * PAGE_SIZE))
+#define ADDR2PAGE(x) ((x) / PAGE_SIZE)
 
 struct { bool allocated = false, continued = false; } pages[PAGE_COUNT];
 
