@@ -77,7 +77,7 @@ bool GPU::valid() noexcept {
         return _Valid;
 }
 
-void GPU::showpicture() noexcept {
+void GPU::showdemopicture() noexcept {
         uint32_t x,y;
         uint8_t *ptr=buffer;
         const char *data=header_data;

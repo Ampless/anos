@@ -4,23 +4,15 @@
 # define assert(expr)
 # define assert_perror(expr)
 #else
-#include "raspi/uart0.h"
+#include "printf.h"
 namespace {
         void __assert_fail(const char *assertion, const char *file,
-                        unsigned int line, const char *function) {
-                //this should be printf,
-                //but we currently dont have that
-                uart_puts(__progname);
-                uart_puts(*__progname ? ": " : "");
-                uart_puts(file);
-                uart_puts(":0x");
-                hex(line);
-                uart_puts(": ");
-                uart_puts(function ? function : "");
-                uart_puts(function ? ": " : "");
-                uart_puts("Assertion '");
-                uart_puts(assertion);
-                uart_puts("' failed.\n");
+                           unsigned int line, const char *function) {
+                printf("%s%s", __progname, *__progname ? ": " : "");
+                printf("%s:%d: ", file, line);
+                printf("%s", function ? function : "");
+                printf("%s", function ? ": " : "");
+                printf("Assertion '%s' failed.\n", assertion);
                 abort();
         }
 }

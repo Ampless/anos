@@ -1,5 +1,4 @@
 #include "kinclude.h"
-//#include "sft/schrift.h"
 
 extern "C" void kmain(uint64_t dtb_ptr32,
                       uint64_t x1,
@@ -34,11 +33,8 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         usleep(1000000);
 
         GPU gpu;
-        if(!gpu.valid()) {
-                uart_puts("GPU wasn't initialized properly.\n");
-                spinwhile(1);
-        }
-        gpu.showpicture();
+        assert(gpu.valid());
+        gpu.showdemopicture();
 
         for(uint32_t x = 0; x < gpu.width; x++)
                 for(uint32_t y = 0; y < gpu.height; y++)
@@ -47,7 +43,7 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         uint64_t end = get_system_timer();
 
         uart_puts("All of this took ");
-        hex(end - start - 1000000);
+        printf("%d", end - start - 1000000);
         uart_puts(" microseconds.\n");
 
         uint32_t ass = x1 & 0xf;
