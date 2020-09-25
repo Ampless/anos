@@ -3,7 +3,7 @@
 
 volatile uint32_t  __attribute__((aligned(16))) mbox[36];
 
-int mbox_call(char ch)
+bool mbox_call(char ch)
 {
     uint32_t r = (((uint32_t)((uintptr_t)&mbox)&~0xF) | (ch&0xF));
     spinwhile(MBOX_STATUS & MBOX_FULL);

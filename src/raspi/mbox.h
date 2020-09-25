@@ -35,4 +35,4 @@ extern volatile uint32_t mbox[36];
 #define MBOX_TAG_SETCLKRATE     0x38002
 #define MBOX_TAG_LAST           0
 
-int mbox_call(char channel);
+bool mbox_call(char channel);
