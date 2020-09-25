@@ -19,20 +19,16 @@ namespace {
         void spincycles(int n) {
                 if(n) spinwhile(n--);
         }
-        volatile uint64_t get_system_timer()
+        inline volatile uint64_t get_system_timer()
         {
-                uint32_t h=SYSTMR_HI;
-                uint32_t l=SYSTMR_LO;
-                if(h!=SYSTMR_HI) {
-                        h=SYSTMR_HI;
-                        l=SYSTMR_LO;
-                }
-                return ((uint64_t) h << 32) | l;
+                return ((uint64_t) SYSTMR_HI << 32) | SYSTMR_LO;
         }
-        void usleep(uint64_t n)
+        inline volatile void usleep(uint64_t n)
         {
                 uint64_t t = get_system_timer();
-                if(t) while(get_system_timer() < t+n);
+                if(!t) return;
+                t += n;
+                spinwhile(get_system_timer() < t);
         }
         inline volatile uint64_t rdtsc() {
                 asm volatile ("isb; mrs x0, cntvct_el0");
