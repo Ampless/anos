@@ -64,12 +64,3 @@ int uart_getc() {
 void uart_puts(const char *s) {
         while(*s) uart_putc(*s++);
 }
-
-void hex(int d) {
-        int n, c;
-        for(c=28;c>=0;c-=4) {
-                n=(d>>c)&0xF;
-                n+=n>9?0x37:0x30;
-                uart_putc(n);
-        }
-}
