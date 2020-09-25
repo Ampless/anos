@@ -28,23 +28,6 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         srand();
         printf("Random number: %8x\n", rand());
 
-        //i really want to get rid of this, but it seems like i forgot
-        //to wait for sth in gpu_init, because it segfaults in qemu
-        usleep(1000000);
-
-        GPU gpu;
-        assert(gpu.valid());
-        gpu.showdemopicture();
-
-        for(uint32_t x = 0; x < gpu.width; x++)
-                for(uint32_t y = 0; y < gpu.height; y++)
-                        gpu.drawpixel(x, y, x, y, rand());
-
-        uint64_t end = get_system_timer();
-
-        uart_puts("All of this took ");
-        printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
-
         uint32_t ass = x1 & 0xf;
         uart_puts("physical address space: ");
         if(ass <= 6)
@@ -62,5 +45,24 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         x1 >>= 4;
         printf("4k granules %ssupported.\n", x1 & 0xf ? "not " : "");
 
-        while(1) uart_putc(uart_getc());
+        //i really want to get rid of this, but it seems like i forgot
+        //to wait for sth in gpu ctor, because it segfaults in qemu
+        usleep(1000000);
+
+        GPU gpu;
+        assert(gpu.valid());
+        gpu.showdemopicture();
+
+        for(uint32_t x = 0; x < gpu.width; x++)
+                for(uint32_t y = 0; y < gpu.height; y++)
+                        gpu.drawpixel(x, y, x|rand(), y|rand(), (x^y)|rand());
+
+        uint64_t end = get_system_timer();
+
+        uart_puts("All of this took ");
+        printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
+
+        printf("Allocated at %lx, %lx", kalloc(100), kalloc(100));
+
+        spinwhile(1);
 }
