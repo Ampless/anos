@@ -63,12 +63,12 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
-    - run: |
-       git clone https://github.com/chrissxYT/sm.git
-       cd sm
-       gcc -o sm src/*.c
-       cd ..
-       sm/sm
+    #- run: |
+    #   git clone https://github.com/chrissxYT/sm.git
+    #   cd sm
+    #   gcc -o sm src/*.c
+    #   cd ..
+    #   sm/sm
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
