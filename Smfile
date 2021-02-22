@@ -1,5 +1,5 @@
 S {
-        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/_start.S -o src/_start.o
+        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/raspi/boot.S -o src/raspi/boot.o
 }
 
 cpp {
