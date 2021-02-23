@@ -37,3 +37,5 @@ namespace {
                 asm volatile ("isb; mrs x0, cntfrq_el0");
         }
 }
+
+#define abort() spinwhile(1)

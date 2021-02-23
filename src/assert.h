@@ -1,26 +1,31 @@
 #pragma once
 
+void abort();
+
 #ifdef ANOS_NODEBUG
 # define assert(expr)
 #else
-#include "printf.h"
+# include "printf.h"
 namespace {
-        void __assert_fail(const char *assertion, const char *file,
-                           unsigned int line, const char *function) {
-                printf("%s%s", __progname, *__progname ? ": " : "");
-                printf("%s:%d: ", file, line);
-                printf("%s", function ? function : "");
-                printf("%s", function ? ": " : "");
-                printf("Assertion '%s' failed.\n", assertion);
+        inline void _assert_fail(const char *ass,
+                                 const char *file,
+                                 unsigned    line,
+                                 const char *func) {
+                printf("anOS: %s:%d: ", file, line);
+                if(func) printf("%s: ", func);
+                printf("Assertion '%s' failed.\n", ass);
                 abort();
         }
 }
 
-#define assert(expr) (static_cast<bool> (expr) ? (void)(0) \
-                : __assert_fail (#expr, __FILE__, __LINE__, __ASSERT_FUNCTION))
+# define assert(expr) (static_cast<bool>(expr) ? (void)(0) \
+                : _assert_fail (#expr, __FILE__, __LINE__, ASSERT_FUNCTION))
 
+# ifdef __PRETTY_FUNCTION__
 // __PRETTY_FUNCTION__ is a GNU extension, which is a bit nicer than
 // C's __func__.
-# define __ASSERT_FUNCTION __extension__ __PRETTY_FUNCTION__
-
+#  define ASSERT_FUNCTION __extension__ __PRETTY_FUNCTION__
+# else
+#  define ASSERT_FUNCTION __func__
+# endif
 #endif
