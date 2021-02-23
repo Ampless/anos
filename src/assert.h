@@ -1,8 +1,7 @@
 #pragma once
 
-#ifdef NDEBUG
+#ifdef ANOS_NODEBUG
 # define assert(expr)
-# define assert_perror(expr)
 #else
 #include "printf.h"
 namespace {
@@ -17,7 +16,7 @@ namespace {
         }
 }
 
-# define assert(expr) (static_cast <bool> (expr) ? (void)(0) \
+#define assert(expr) (static_cast<bool> (expr) ? (void)(0) \
                 : __assert_fail (#expr, __FILE__, __LINE__, __ASSERT_FUNCTION))
 
 // __PRETTY_FUNCTION__ is a GNU extension, which is a bit nicer than
