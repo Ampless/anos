@@ -10,8 +10,8 @@ namespace {
         //doesnt actually seed, but it just initializes
         void srand() {
                 RNG_STATUS = 0x40000;
-                RNG_INT_MASK |= 1;
-                RNG_CTRL |= 1;
+                RNG_INT_MASK = RNG_INT_MASK | 1;
+                RNG_CTRL = RNG_CTRL | 1;
                 spinwhile(!(RNG_STATUS >> 24));
         }
 

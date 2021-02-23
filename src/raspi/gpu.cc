@@ -1,6 +1,7 @@
 #include "gpu.h"
 #include "mbox.h"
 #include "uart0.h"
+#include "image.h"
 
 uint32_t &GPU::pixel(uint32_t x, uint32_t y) noexcept {
         return *(uint32_t*)&buffer[y*pitch+x*4];
@@ -12,8 +13,6 @@ void GPU::drawpixel(int x, int y, int r, int g, int b) noexcept {
         p[1] = g;
         p[2] = b;
 }
-
-#include "image.h"
 
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
         _Valid = false;
@@ -62,11 +61,11 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
 
         mbox[34] = MBOX_TAG_LAST;
 
-        if(mbox_call(MBOX_CH_PROP) && mbox[20]==32 && mbox[28]!=0) {
-                mbox[28]&=0x3FFFFFFF; //GPU has different addresses, idk
-                this->width=mbox[5];
-                this->height=mbox[6];
-                pitch=mbox[33]; //number of bytes per line
+        if(mbox_call(MBOX_CH_PROP) && mbox[20] == 32 && mbox[28]) {
+                mbox[28] = mbox[28] & 0x3FFFFFFF; //GPU has different addrs, idk
+                this->width  = mbox[5];
+                this->height = mbox[6];
+                pitch = mbox[33]; //number of bytes per line
                 if(!mbox[24]) return; //BGR is an error.
                 buffer=(uint8_t *)((uintptr_t)mbox[28]);
                 _Valid = true;

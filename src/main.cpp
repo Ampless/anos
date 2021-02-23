@@ -74,6 +74,9 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         assert(gpu.valid());
         gpu.showdemopicture();
 
+        //the user wants some time to look at the picture
+        usleep(1000000);
+
         for(uint32_t x = 0; x < gpu.width; x++)
                 for(uint32_t y = 0; y < gpu.height; y++)
                         gpu.drawpixel(x, y, x|rand(), y|rand(), (x^y)|rand());
@@ -83,9 +86,9 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         uart_puts("All of this took ");
         printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
 
-        printf("Allocated 100B each at %lx and %lx", kalloc(100), kalloc(100));
+        printf("Allocated 100B each @ %lx & %lx\n", kalloc(100), kalloc(100));
 
-        spinwhile(1);
+        shutdown(false);
 }
 #else
 # error "Check the arch your're compiling for! It isn't AArch64 nor is it x86."
