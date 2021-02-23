@@ -8,9 +8,9 @@ cpp {
         %CPPC src/main.o src/main.cpp
         %CPPC src/printf.o src/printf.cpp
         %CPPC src/pages.o src/pages.cpp
-        %CPPC src/raspi/mbox.o src/raspi/mbox.cpp
-        %CPPC src/raspi/gpu.o src/raspi/gpu.cpp
-        %CPPC src/raspi/uart0.o src/raspi/uart0.cpp
+        %CPPC src/raspi/mbox.o src/raspi/mbox.cc
+        %CPPC src/raspi/gpu.o src/raspi/gpu.cc
+        %CPPC src/raspi/uart0.o src/raspi/uart0.cc
 }
 
 link {

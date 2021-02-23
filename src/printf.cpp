@@ -24,12 +24,10 @@ uint32_t vsprintf(char *dst, const char *fmt, __builtin_va_list args) {
 }
 
 uint32_t vprintf(const char *fmt, __builtin_va_list args) {
-        return rprintf(&uart_putc, fmt, args);
+        return rprintf(&putc, fmt, args);
 }
 
-uint32_t rprintf(void(*putc)(int),
-                 const char *fmt,
-                 __builtin_va_list args) {
+uint32_t rprintf(void(*putc)(int), const char *fmt, __builtin_va_list args) {
         if(!fmt || !putc) return 0;
         uint32_t count = 0;
         int64_t arg = 0;
@@ -101,7 +99,7 @@ uint32_t rprintf(void(*putc)(int),
                         } else if(*fmt=='s') {
                                 p = __builtin_va_arg(args, char*);
 cpystr:
-                                if(!p) p = "(null)";
+                                if(!p) p = (char *) "(null)";
                                 while(*p)
                                         putc(*p++), count++;
                         }
