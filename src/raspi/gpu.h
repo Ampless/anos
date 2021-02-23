@@ -3,7 +3,7 @@
 
 class GPU {
         private:
-                bool _Valid;
+                bool _valid;
         public:
                 uint32_t width, height, pitch;
                 uint8_t *buffer;

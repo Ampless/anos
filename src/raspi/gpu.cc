@@ -15,7 +15,7 @@ void GPU::drawpixel(int x, int y, int r, int g, int b) noexcept {
 }
 
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
-        _Valid = false;
+        this->_valid = false;
 
         mbox[0] = 35*4;
         mbox[1] = MBOX_REQUEST;
@@ -68,12 +68,12 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
                 pitch = mbox[33]; //number of bytes per line
                 if(!mbox[24]) return; //BGR is an error.
                 buffer=(uint8_t *)((uintptr_t)mbox[28]);
-                _Valid = true;
+                this->_valid = true;
         } else uart_puts("Can't set screen res (TODO: print res)\n");
 }
 
 bool GPU::valid() noexcept {
-        return _Valid;
+        return _valid;
 }
 
 void GPU::showdemopicture() noexcept {
