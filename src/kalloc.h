@@ -4,7 +4,7 @@
 
 namespace {
         inline static void *kalloc(size_t size) {
-                return k_page_alloc(size);
+                return k_page_alloc(size / PAGE_SIZE);
         }
 
         inline static void kfree(void *ptr) {

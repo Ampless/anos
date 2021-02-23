@@ -1,15 +1,15 @@
 #include "pages.h"
 
 #define MEMORY_SIZE  (256 * 1024 * 1024)
-#define PAGE_SIZE    (4096)
+// TODO: get this from arch specific check
 #define PAGE_COUNT   (MEMORY_SIZE / PAGE_SIZE)
-#define FIRST_PAGE   ((16 * 1024 * 1024) / PAGE_SIZE)
+#define FIRST_PAGE   ((0x10 * 0x100000) / PAGE_SIZE)
 #define PAGE2ADDR(x) ((void *)((x) * PAGE_SIZE))
-#define ADDR2PAGE(x) ((x) / PAGE_SIZE)
+#define ADDR2PAGE(x) (((uintptr_t)(x)) / PAGE_SIZE)
 
 struct { bool allocated = false, continued = false; } pages[PAGE_COUNT];
 
-bool k_pages_viable(size_t first, size_t count) {
+inline bool k_pages_viable(size_t first, size_t count) {
         if(first + count >= PAGE_COUNT) return false;
         for(size_t i = first; i < first + count; i++)
                 if(pages[i].allocated)
@@ -17,7 +17,7 @@ bool k_pages_viable(size_t first, size_t count) {
         return true;
 }
 
-void *k_pages_alloc_unchecked(size_t first, size_t count) {
+inline void *k_pages_alloc_unchecked(size_t first, size_t count) {
         for(size_t i = first; i < first + count - 1; i++) {
                 pages[i].allocated = true;
                 pages[i].continued = true;
@@ -35,5 +35,11 @@ void *k_page_alloc(size_t count) {
 }
 
 void k_page_free(void *ptr) {
-        //TODO: actually free the pages
+        if((uintptr_t)ptr % PAGE_SIZE) return;
+        size_t i = ADDR2PAGE(ptr);
+        if(!pages[i--].allocated) return;
+        while(pages[++i].continued) {
+                pages[i].allocated = pages[i].continued = false;
+        }
+        pages[i].allocated = false;
 }
