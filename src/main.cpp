@@ -1,5 +1,26 @@
-#include "kinclude.h"
-
+// https://sourceforge.net/p/predef/wiki/Architectures/
+#if defined(__amd64__) || \
+    defined(__amd64) || \
+    defined(__x86_64__) || \
+    defined(__x86_64) || \
+    defined(_M_X64) || \
+    defined(_M_AMD64) || \
+    defined(i386) || \
+    defined(__i386) || \
+    defined(__i386__) || \
+    defined(__IA32__) || \
+    defined(_M_I86) || \
+    defined(_M_IX86) || \
+    defined(__X86__) || \
+    defined(_X86_) || \
+    defined(__THW_INTEL__) || \
+    defined(__I86__) || \
+    defined(__INTEL__)
+# define ANOS_X86_PC
+# error "Support for x86 is coming, but currently only RasPis are supported."
+#elif defined(__aarch64__)
+# define ANOS_ARM64_RASPI
+# include "kinclude.h"
 extern "C" void kmain(uint64_t dtb_ptr32,
                       uint64_t x1,
                       uint64_t x2,
@@ -62,7 +83,10 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         uart_puts("All of this took ");
         printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
 
-        printf("Allocated at %lx, %lx", kalloc(100), kalloc(100));
+        printf("Allocated 100B each at %lx and %lx", kalloc(100), kalloc(100));
 
         spinwhile(1);
 }
+#else
+# error "Check the arch your're compiling for! It isn't AArch64 nor is it x86."
+#endif
