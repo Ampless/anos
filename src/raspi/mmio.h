@@ -7,7 +7,7 @@
 #elif RASPI_TARGET == 4
 # define MMIO_BASE 0xFE000000
 #else
-# error "Get yourself a RasPi 3/4!"
+# error "Get yourself a RasPi 3/4 or help us implementing support for yours!"
 #endif
 
 #undef RASPI_TARGET
