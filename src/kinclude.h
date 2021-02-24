@@ -2,7 +2,8 @@
 
 #include "stdint.h"
 #include "kalloc.h"
-#include "klib.h"
+#include "assert.h"
+#include "mem.h"
 
 #ifdef ANOS_ARM64_RASPI
 # include "raspi/raspi.h"

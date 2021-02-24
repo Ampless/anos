@@ -1,5 +1,5 @@
 #include "mbox.h"
-#include "timing.h"
+#include "timing_and_power.h"
 
 volatile uint32_t  __attribute__((aligned(16))) mbox[36];
 

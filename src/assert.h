@@ -1,10 +1,10 @@
 #pragma once
 
-void abort();
 
 #ifdef ANOS_NODEBUG
 # define assert(expr)
 #else
+# include "abort.h"
 # include "printf.h"
 namespace {
         inline void _assert_fail(const char *ass,

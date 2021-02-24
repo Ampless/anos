@@ -1,6 +1,6 @@
 #pragma once
 #include "mmio.h"
-#include "../klib.h"
+#include "../mem.h"
 #include "../stdint.h"
 
 extern volatile uint32_t mbox[36];

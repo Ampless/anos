@@ -1,6 +1,13 @@
 #pragma once
+#include "../stdint.h"
+#include "../mem.h"
+#include "mmio.h"
 #include "mbox.h"
-#include "timing.h"
+
+#define spinwhile(b) while(b) cpu_relax()
+
+#define SYSTMR_LO mem(MMIO_BASE+0x00003004)
+#define SYSTMR_HI mem(MMIO_BASE+0x00003008)
 
 #define PM_RSTC         mem(MMIO_BASE+0x0010001c)
 #define PM_RSTS         mem(MMIO_BASE+0x00100020)
@@ -9,6 +16,15 @@
 #define PM_RSTC_FULLRST 0x00000020
 
 namespace {
+        inline void cpu_relax() {
+                // this is copy-paste from linux
+                // (i have actually looked up what arm says, yield
+                //  is for, and using it seems fine to me)
+                asm volatile("yield" ::: "memory");
+        }
+        inline void spincycles(int n) {
+                if(n) spinwhile(n--);
+        }
         void shutdown(bool restart) {
                 if(!restart) {
                         for(uint32_t i=0;i<16;i++) {
@@ -43,5 +59,29 @@ namespace {
                 PM_RSTS = PM_WDOG_MAGIC | r;
                 PM_WDOG = PM_WDOG_MAGIC | 10;
                 PM_RSTC = PM_WDOG_MAGIC | PM_RSTC_FULLRST;
+        }
+}
+
+namespace {
+        //TODO: rename to clock
+        inline uint64_t get_system_timer()
+        {
+                return ((uint64_t) SYSTMR_HI << 32) | SYSTMR_LO;
+        }
+        inline void usleep(uint64_t n)
+        {
+                uint64_t t = get_system_timer() + n;
+                if(t == n) return;
+                spinwhile(get_system_timer() < t);
+        }
+        inline uint64_t rdtsc() {
+                asm volatile ("isb; mrs x0, cntvct_el0");
+        }
+        // note: this is not always accurate
+        inline uint64_t cpufrequency() {
+                asm volatile ("isb; mrs x0, cntfrq_el0");
+        }
+        inline void abort() {
+                shutdown(false);
         }
 }

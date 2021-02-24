@@ -1,5 +1,5 @@
 #pragma once
-#include "../klib.h"
+#include "../mem.h"
 #include "mmio.h"
 
 #define RNG_CTRL        mem(MMIO_BASE+0x00104000)
