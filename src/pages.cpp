@@ -1,11 +1,13 @@
 #include "pages.h"
+#include "memset.h"
 
-#define MEMORY_SIZE  (256 * 1024 * 1024)
+#define MEMORY_SIZE    (256 * 1024 * 1024)
 // TODO: get this from arch specific check
-#define PAGE_COUNT   (MEMORY_SIZE / PAGE_SIZE)
-#define FIRST_PAGE   ((0x10 * 0x100000) / PAGE_SIZE)
-#define PAGE2ADDR(x) ((void *)((x) * PAGE_SIZE))
-#define ADDR2PAGE(x) (((uintptr_t)(x)) / PAGE_SIZE)
+#define PAGE_COUNT     (MEMORY_SIZE / PAGE_SIZE)
+#define FIRST_PAGE     ((0x10 * 0x100000) / PAGE_SIZE)
+#define PAGE2ADDR(x)   ((void *)((x) * PAGE_SIZE))
+#define ADDR2PAGE(x)   (((uintptr_t)(x)) / PAGE_SIZE)
+#define PAGES2BYTES(x) ((x) * PAGE_SIZE)
 
 struct { bool allocated = false, continued = false; } pages[PAGE_COUNT];
 
@@ -25,7 +27,9 @@ inline void *k_pages_alloc_unchecked(size_t first, size_t count) {
         }
         pages[first + count - 1].allocated = true;
         pages[first + count - 1].continued = false;
-        return PAGE2ADDR(first);
+        void *ptr = PAGE2ADDR(first);
+        memset(ptr, 0, PAGES2BYTES(count));
+        return ptr;
 }
 
 void *k_page_alloc(size_t count) {

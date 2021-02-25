@@ -1,5 +1,4 @@
 #include "stdint.h"
-#include "memset.h"
 #include "pages.h"
 
 namespace {
@@ -12,10 +11,7 @@ namespace {
         }
 
         inline static void *kcalloc(size_t nmemb, size_t size) {
-                size_t len = nmemb * size;
-                void *ptr = kalloc(len);
-                if(ptr) memset(ptr, 0, len);
-                return ptr;
+                return kalloc(nmemb * size);
         }
 
         //void *realloc(void *ptr, size_t size);
