@@ -63,16 +63,13 @@ namespace {
 }
 
 namespace {
-        //TODO: rename to clock
-        inline uint64_t get_system_timer()
-        {
+        inline uint64_t clock() {
                 return ((uint64_t) SYSTMR_HI << 32) | SYSTMR_LO;
         }
-        inline void usleep(uint64_t n)
-        {
-                uint64_t t = get_system_timer() + n;
+        inline void usleep(uint64_t n) {
+                uint64_t t = clock() + n;
                 if(t == n) return;
-                spinwhile(get_system_timer() < t);
+                spinwhile(clock() < t);
         }
         inline uint64_t rdtsc() {
                 asm volatile ("isb; mrs x0, cntvct_el0");

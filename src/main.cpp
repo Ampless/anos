@@ -25,7 +25,7 @@ extern "C" void kmain(uint64_t dtb_ptr32,
                       uint64_t x1,
                       uint64_t x2,
                       uint64_t x3) {
-        uint64_t start = get_system_timer();
+        uint64_t start = clock();
         uart_init();
 
         // get the serial number with a mailbox call
@@ -52,12 +52,11 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         uint32_t ass = x1 & 0xf;
         uart_puts("physical address space: ");
         if(ass <= 6)
-                printf("%d bits", 32 + (
+                printf("%d bits\n", 32 + (
                        ass == 0 ? 0 :  ass == 1 ? 4 :
                        ass == 2 ? 8 :  ass == 3 ? 10 :
                        ass == 4 ? 12 : ass == 5 ? 16 : 20));
-        else uart_puts("unknown");
-        uart_putc('\n');
+        else uart_puts("unknown\n");
 
         x1 >>= 20;
         printf("16k granules %ssupported.\n", x1 & 0xf ? "" : "not ");
@@ -77,11 +76,11 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         //the user wants some time to look at the picture
         usleep(1000000);
 
-        for(uint32_t x = 0; x < gpu.width; x++)
-                for(uint32_t y = 0; y < gpu.height; y++)
-                        gpu.drawpixel(x, y, x|rand(), y|rand(), (x^y)|rand());
+        for(uint32_t x = 0; x < gpu.width(); x++)
+                for(uint32_t y = 0; y < gpu.height(); y++)
+                        gpu.pixel(x, y) = rgba(x|rand(), y|rand(), (x^y)|rand(), 0xff);
 
-        uint64_t end = get_system_timer();
+        uint64_t end = clock();
 
         uart_puts("All of this took ");
         printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
