@@ -39,6 +39,7 @@ void uart_init() {
         r|=(4<<12)|(4<<15);    // alt0
         GPFSEL1 = r;
         GPPUD = 0;            // enable pins 14 and 15
+        //weirdest timing hack ever TODO: cleanup
         r=150; while(r--) { asm volatile("nop"); }
         GPPUDCLK0 = (1<<14)|(1<<15);
         r=150; while(r--) { asm volatile("nop"); }
