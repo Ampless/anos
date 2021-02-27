@@ -39,4 +39,3 @@ _start:
 4:      mrs x1, ID_AA64MMFR0_EL1
         bl kmain
         b 1b
-

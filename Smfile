@@ -2,6 +2,14 @@ S {
         !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/raspi/boot.S -o src/raspi/boot.o
 }
 
+image {
+        # !aarch64-none-elf-ld -r -b binary -o src/raspi/image.o src/raspi/image.rle
+        %CC tooling/image2rle tooling/image2rle.c
+        %CC tooling/bin2arr tooling/bin2arr.c
+        !tooling/image2rle > src/raspi/image.rle
+        !tooling/bin2arr src/raspi/image.rle src/raspi/image.cbin image
+}
+
 cpp {
         %SET CPPC aarch64-none-elf-g++
         %APPEND CPPFLAGS -Wno-return-type -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c
@@ -11,6 +19,7 @@ cpp {
         %CPPC src/raspi/mbox.o src/raspi/mbox.cc
         %CPPC src/raspi/gpu.o src/raspi/gpu.cc
         %CPPC src/raspi/uart0.o src/raspi/uart0.cc
+        %CPPC src/rle/rle.o src/rle/rle.c
 }
 
 link {
@@ -22,10 +31,10 @@ objcopy {
 }
 
 clean {
-        !rm -f anos.elf src/*.o src/*/*.o
+        !rm -f anos.elf src/*.o src/*/*.o tooling/image2rle tooling/bin2arr
 }
 
-elf (S cpp link) {}
+elf (S image cpp link) {}
 img (elf objcopy) {}
 all (img clean) {}
 

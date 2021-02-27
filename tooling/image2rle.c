@@ -1,5 +1,3 @@
-// directly include rle because this is a simple single-file program
-#include "../src/varint/varint.c"
 #include "../src/rle/rle.c"
 #include "../src/raspi/image.h"
 

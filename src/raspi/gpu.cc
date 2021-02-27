@@ -1,7 +1,8 @@
 #include "gpu.h"
 #include "mbox.h"
 #include "uart0.h"
-#include "image.h"
+#include "../rle/rle.h"
+#include "../kalloc.h"
 
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
         this->_valid = false;
@@ -62,11 +63,23 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
         } else uart_puts("Can't set screen res (TODO: print res)\n");
 }
 
+#include "image.cbin"
+static uint32_t image_width = 1024;
+static uint32_t image_height = 768;
+#define HEADER_PIXEL(data, pixel) {\
+pixel[0] = (((data[0] - 33) << 2) | ((data[1] - 33) >> 4)); \
+pixel[1] = ((((data[1] - 33) & 0xF) << 4) | ((data[2] - 33) >> 2)); \
+pixel[2] = ((((data[2] - 33) & 0x3) << 6) | ((data[3] - 33))); \
+data += 4; \
+}
+
 void GPU::showdemopicture() noexcept {
         uint32_t x,y;
         uint8_t *ptr = buffer;
-        const char *data = header_data;
+        uint8_t *data = (uint8_t *) kalloc(1024 * 1024 * 5);
         uint32_t p = pitch;
+
+        rledecompress((uint8_t *) image, sizeof(image), data);
 
         ptr += (_height - image_height) / 2 * p;
         ptr += (_width  - image_width) * 2;
