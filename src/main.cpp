@@ -83,7 +83,7 @@ extern "C" void kmain(uint64_t dtb_ptr32,
         uint64_t end = clock();
 
         uart_puts("All of this took ");
-        printf("%d milliseconds.\n", (end - start) / 1000 - 1000);
+        printf("%d milliseconds.\n", (end - start) / 1000 - 2000);
 
         printf("Allocated 100B each @ %lx & %lx\n", kalloc(100), kalloc(100));
 

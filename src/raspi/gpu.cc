@@ -1,8 +1,6 @@
 #include "gpu.h"
 #include "mbox.h"
 #include "uart0.h"
-#include "../rle/rle.h"
-#include "../kalloc.h"
 
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
         this->_valid = false;
@@ -63,33 +61,21 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
         } else uart_puts("Can't set screen res (TODO: print res)\n");
 }
 
-#include "image.cbin"
-static uint32_t image_width = 1024;
-static uint32_t image_height = 768;
-#define HEADER_PIXEL(data, pixel) {\
-pixel[0] = (((data[0] - 33) << 2) | ((data[1] - 33) >> 4)); \
-pixel[1] = ((((data[1] - 33) & 0xF) << 4) | ((data[2] - 33) >> 2)); \
-pixel[2] = ((((data[2] - 33) & 0x3) << 6) | ((data[3] - 33))); \
-data += 4; \
-}
+#include "demoimage/demoimage.h"
+const char *dumb;
 
 void GPU::showdemopicture() noexcept {
-        uint32_t x,y;
-        uint8_t *ptr = buffer;
-        uint8_t *data = (uint8_t *) kalloc(1024 * 1024 * 5);
-        uint32_t p = pitch;
+        draw_picture([](uint32_t x, uint32_t y) { return 0xff202020; });
 
-        rledecompress((uint8_t *) image, sizeof(image), data);
+        auto draw = [](uint32_t x, uint32_t y) {
+                char px[4];
+                HEADER_PIXEL(dumb, px);
+                return *((uint32_t *)&px);
+        };
 
-        ptr += (_height - image_height) / 2 * p;
-        ptr += (_width  - image_width) * 2;
-        for(y=0;y<_height;y++) {
-                for(x=0;x<_width;x++) {
-                        char px[4];
-                        HEADER_PIXEL(data, px);
-                        pixel(x, y) = *((uint32_t *)&px);
-                        ptr+=4;
-                }
-                ptr+=p-_width*4;
-        }
+        dumb = cmpt_data;
+        draw_picture(draw, cmpt_width, cmpt_height, 262, 50);
+
+        dumb = ludwig_data;
+        draw_picture(draw, ludwig_width, ludwig_height, 112, 600);
 }
