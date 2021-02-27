@@ -20,4 +20,4 @@ class GPU {
                 GPU(uint32_t width = 1024, uint32_t height = 768) noexcept;
 };
 
-#define rgba(r, g, b, a) (((r)<<24) | ((g)<<16) | ((b)<<8) | (a))
+#define rgba(r, g, b, a) ((r) | ((g)<<8) | ((b)<<16) | ((a)<<24))
