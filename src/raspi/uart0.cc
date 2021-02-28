@@ -54,12 +54,12 @@ void uart_init() {
 
 void uart_putc(int c) {
         if(!c) return;
-        spinwhile(UART0_FR&0x20);
+        spinwhile(UART0_FR & 0x20);
         UART0_DR=c;
 }
 
 int uart_getc() {
-        spinwhile(UART0_FR&0x10);
+        spinwhile(UART0_FR & 0x10);
         return UART0_DR;
 }
 
