@@ -1,8 +1,8 @@
 #pragma once
-#include "../stdint.h"
-#include "../mem.h"
-#include "mmio.h"
-#include "mbox.h"
+#include <stdint.h>
+#include <mem.hh>
+#include <raspi/mmio.hh>
+#include <raspi/mbox.hh>
 
 #define spinwhile(b) while(b) cpu_relax()
 

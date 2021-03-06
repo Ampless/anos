@@ -1,9 +1,9 @@
-#include "uart0.h"
-#include "mmio.h"
-#include "mbox.h"
-#include "timing_and_power.h"
-#include "../assert.h"
-#include "../mem.h"
+#include "uart0.hh"
+#include "mmio.hh"
+#include "mbox.hh"
+#include "timing_and_power.hh"
+#include "../assert.hh"
+#include "../mem.hh"
 
 // PL011 UART registers
 #define UART0_DR   mem(MMIO_BASE+0x00201000)

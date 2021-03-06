@@ -1,5 +1,5 @@
-#include "mbox.h"
-#include "timing_and_power.h"
+#include <raspi/mbox.hh>
+#include <raspi/timing_and_power.hh>
 
 volatile uint32_t  __attribute__((aligned(16))) mbox[36];
 

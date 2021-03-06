@@ -1,5 +1,5 @@
-#include "printf.h"
-#include "stdarg.h"
+#include <printf.hh>
+#include <stdarg.hh>
 
 namespace {
         inline uint32_t rprintf(void(*putc)(int),

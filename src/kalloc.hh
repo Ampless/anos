@@ -1,5 +1,5 @@
-#include "stdint.h"
-#include "pages.h"
+#include <stdint.h>
+#include <pages.hh>
 
 namespace {
         inline static void *kalloc(size_t size) {

@@ -4,8 +4,8 @@
 #ifdef ANOS_NODEBUG
 # define assert(expr)
 #else
-# include "abort.h"
-# include "printf.h"
+# include <abort.hh>
+# include <printf.hh>
 namespace {
         inline void _assert_fail(const char *ass,
                                  const char *file,

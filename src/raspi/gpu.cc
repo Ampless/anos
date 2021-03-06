@@ -1,6 +1,6 @@
-#include "gpu.h"
-#include "mbox.h"
-#include "uart0.h"
+#include <raspi/gpu.hh>
+#include <raspi/mbox.hh>
+#include <raspi/uart0.hh>
 
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
         this->_valid = false;
@@ -61,7 +61,7 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
         } else uart_puts("Can't set screen res (TODO: print res)\n");
 }
 
-#include "demoimage/demoimage.h"
+#include <raspi/demoimage/demoimage.h>
 const char *dumb;
 
 void GPU::showdemopicture() noexcept {

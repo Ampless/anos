@@ -1,8 +1,8 @@
 #pragma once
-#include "stdint.h"
+#include <stdint.h>
 
 //TODO: make portable
-#include "raspi/uart0.h"
+#include <raspi/uart0.hh>
 #define putc uart_putc
 
 uint32_t printf(const char *, ...);

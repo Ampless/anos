@@ -17,10 +17,20 @@
     defined(__I86__) || \
     defined(__INTEL__)
 # define ANOS_X86_PC
-# error "Support for x86 is coming, but currently only RasPis are supported."
 #elif defined(__aarch64__)
 # define ANOS_ARM64_RASPI
-# include "kinclude.h"
+#else
+//TODO: parse more archs
+# error "Check the arch your're compiling for! It isn't AArch64 nor is it x86."
+#endif
+
+#include <kinclude.hh>
+
+#ifdef ANOS_X86_PC
+# error "Support for x86 is coming, but currently only RasPis are supported."
+#endif
+
+#ifdef ANOS_ARM64_RASPI
 extern "C" void kmain(uint64_t dtb_ptr32,
                       uint64_t x1,
                       uint64_t x2,
@@ -89,6 +99,4 @@ extern "C" void kmain(uint64_t dtb_ptr32,
 
         shutdown(false);
 }
-#else
-# error "Check the arch your're compiling for! It isn't AArch64 nor is it x86."
 #endif

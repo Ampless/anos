@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config.h"
+#include <raspi/config.hh>
 
 #if RASPI_TARGET == 3
 # define MMIO_BASE 0x3F000000

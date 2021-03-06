@@ -1,4 +1,4 @@
-#include "../stdint.h"
+#include <stdint.h>
 
 //TODO: read ID_AA64MMFR0_EL1
 #define GRANULE_SIZE 64 * 1024

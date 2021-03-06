@@ -1,5 +1,5 @@
-#include "pages.h"
-#include "memset.h"
+#include <pages.hh>
+#include <memset.hh>
 
 #define MEMORY_SIZE    (256 * 1024 * 1024)
 // TODO: get this from arch specific check
