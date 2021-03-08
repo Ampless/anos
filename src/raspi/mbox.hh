@@ -35,4 +35,25 @@ extern volatile uint32_t mbox[36];
 #define MBOX_TAG_SETCLKRATE     0x38002
 #define MBOX_TAG_LAST           0
 
-bool mbox_call(char channel);
+bool mbox_call(const char channel);
+
+constexpr static inline size_t mbox_cmd(size_t idx,
+                                        const uint32_t cmd,
+                                        const uint32_t len) {
+        mbox[idx++] = cmd;
+        mbox[idx++] = len;
+        mbox[idx++] = len;
+        return idx;
+}
+
+constexpr static inline size_t mbox_cmd32(size_t         idx,
+                                          const uint32_t cmd,
+                                          const uint32_t len,
+                                          const uint32_t arg1,
+                                          const uint32_t arg2) {
+        //static_assert(len == 1 || len == 2);
+        idx = mbox_cmd(idx, cmd, len * 4);
+        mbox[idx++] = arg1;
+        if(len == 2) mbox[idx++] = arg2;
+        return idx;
+}

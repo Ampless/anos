@@ -5,49 +5,20 @@
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
         this->_valid = false;
 
-        mbox[0] = 35*4;
-        mbox[1] = MBOX_REQUEST;
+        uint32_t idx = 0;
 
-        mbox[2] = 0x48003; //set physical width & height
-        mbox[3] = 8;
-        mbox[4] = 8;
-        mbox[5] = width;
-        mbox[6] = height;
+        mbox[idx++] = 35*4;
+        mbox[idx++] = MBOX_REQUEST;
 
-        mbox[7] = 0x48004; //set virtual width & height
-        mbox[8] = 8;
-        mbox[9] = 8;
-        mbox[10] = width;
-        mbox[11] = height;
+        idx = mbox_cmd32(idx, 0x48003, 2, width, height); //set physical width & height
+        idx = mbox_cmd32(idx, 0x48004, 2, width, height); //set virtual width & height
+        idx = mbox_cmd32(idx, 0x48009, 2, 0, 0); //set virtual offset
+        idx = mbox_cmd32(idx, 0x48005, 1, 32, 0); //set depth
+        idx = mbox_cmd32(idx, 0x48006, 1, 1, 0); //set pixel order
+        idx = mbox_cmd32(idx, 0x40001, 2, 4096, 0); //get framebuffer & alignment (pointer, size)
+        idx = mbox_cmd32(idx, 0x40008, 1, 0, 0); //get pitch
 
-        mbox[12] = 0x48009; //set virtual offset
-        mbox[13] = 8;
-        mbox[14] = 8;
-        mbox[15] = 0; //x
-        mbox[16] = 0; //y
-
-        mbox[17] = 0x48005; //set depth
-        mbox[18] = 4;
-        mbox[19] = 4;
-        mbox[20] = 32; //bits
-
-        mbox[21] = 0x48006; //set pixel order
-        mbox[22] = 4;
-        mbox[23] = 4;
-        mbox[24] = 1; //RGB
-
-        mbox[25] = 0x40001; //get framebuffer & alignment
-        mbox[26] = 8;
-        mbox[27] = 8;
-        mbox[28] = 4096; //pointer
-        mbox[29] = 0; //size
-
-        mbox[30] = 0x40008; //get pitch
-        mbox[31] = 4;
-        mbox[32] = 4;
-        mbox[33] = 0; //pitch
-
-        mbox[34] = MBOX_TAG_LAST;
+        mbox[idx] = MBOX_TAG_LAST;
 
         if(mbox_call(MBOX_CH_PROP) && mbox[20] == 32 && mbox[28]) {
                 this->_width  = mbox[5];
@@ -65,7 +36,7 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
 const char *dumb;
 
 void GPU::showdemopicture() noexcept {
-        draw_picture([](uint32_t x, uint32_t y) { return 0xff202020; });
+        draw_picture([](uint32_t x, uint32_t y) { return 0xffff4de1; });
 
         auto draw = [](uint32_t x, uint32_t y) {
                 char px[4];

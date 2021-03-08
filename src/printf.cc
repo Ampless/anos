@@ -1,5 +1,5 @@
 #include <printf.hh>
-#include <stdarg.hh>
+#include <stdarg.h>
 
 namespace {
         inline uint32_t rprintf(void(*putc)(int),
@@ -100,5 +100,7 @@ uint32_t sprintf(char *dst, const char *fmt, ...) {
 uint32_t printf(const char *fmt, ...) {
         va_list args;
         va_start(args, fmt);
-        return rprintf(&putc, fmt, args);
+        uint32_t ret = rprintf(&putc, fmt, args);
+        va_end(args);
+        return ret;
 }

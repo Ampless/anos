@@ -10,9 +10,9 @@ class GPU {
                 //Show the #included picture (temporary)
                 void showdemopicture() noexcept;
 
-                inline bool      valid() noexcept { return _valid; }
-                inline uint32_t  width() noexcept { return _width; }
-                inline uint32_t  height() noexcept { return _height; }
+                constexpr inline bool      valid() noexcept { return _valid; }
+                constexpr inline uint32_t  width() noexcept { return _width; }
+                constexpr inline uint32_t  height() noexcept { return _height; }
                 inline uint32_t &pixel(uint32_t x, uint32_t y) noexcept {
                         return *(uint32_t*)&buffer[y*pitch+x*4];
                 }
