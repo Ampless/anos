@@ -31,10 +31,10 @@
 #endif
 
 #ifdef ANOS_ARM64_RASPI
-extern "C" void kmain(uint64_t dtb_ptr32,
+extern "C" void kmain(uint64_t /*dtb_ptr32*/,
                       uint64_t x1,
-                      uint64_t x2,
-                      uint64_t x3) {
+                      uint64_t /*x2*/,
+                      uint64_t /*x3*/) {
         uint64_t start = clock();
         uart_init();
 

@@ -33,12 +33,11 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
 }
 
 #include <raspi/demoimage/demoimage.h>
+//TODO: get rid of this with some constexpr madness
 const char *dumb;
 
 void GPU::showdemopicture() noexcept {
-        draw_picture([](uint32_t x, uint32_t y) { return 0xffff4de1; });
-
-        auto draw = [](uint32_t x, uint32_t y) {
+        auto draw = [](uint32_t, uint32_t) {
                 char px[4];
                 HEADER_PIXEL(dumb, px);
                 return *((uint32_t *)&px);
