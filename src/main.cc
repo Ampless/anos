@@ -77,23 +77,21 @@ extern "C" void kmain(uint64_t /*dtb_ptr32*/,
 
         //i really want to get rid of this, but it seems like i forgot
         //to wait for sth in gpu ctor, because it segfaults in qemu
-        usleep(1000000);
+        usleep(100000);
 
         GPU gpu;
         assert(gpu.valid());
+
+        gpu.draw_picture([](uint32_t x, uint32_t y) {
+                return rgba(x|rand(), y|rand(), (x^y)|rand(), 0xff);
+        });
+
         gpu.showdemopicture();
-
-        //the user wants some time to look at the picture
-        usleep(1000000);
-
-        for(uint32_t x = 0; x < gpu.width(); x++)
-                for(uint32_t y = 0; y < gpu.height(); y++)
-                        gpu.pixel(x, y) = rgba(x|rand(), y|rand(), (x^y)|rand(), 0xff);
 
         uint64_t end = clock();
 
         uart_puts("All of this took ");
-        printf("%d milliseconds.\n", (end - start) / 1000 - 2000);
+        printf("%d milliseconds.\n", (end - start) / 1000 - 100);
 
         printf("Allocated 100B each @ %lx & %lx\n", kalloc(100), kalloc(100));
 
