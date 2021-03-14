@@ -5,20 +5,15 @@
 GPU::GPU(uint32_t width, uint32_t height) noexcept {
         this->_valid = false;
 
-        uint32_t idx = 0;
-
-        mbox[idx++] = 35*4;
-        mbox[idx++] = MBOX_REQUEST;
-
-        idx = mbox_cmd32(idx, 0x48003, 2, width, height); //set physical width & height
-        idx = mbox_cmd32(idx, 0x48004, 2, width, height); //set virtual width & height
-        idx = mbox_cmd32(idx, 0x48009, 2, 0, 0); //set virtual offset
-        idx = mbox_cmd32(idx, 0x48005, 1, 32, 0); //set depth
-        idx = mbox_cmd32(idx, 0x48006, 1, 1, 0); //set pixel order
-        idx = mbox_cmd32(idx, 0x40001, 2, 4096, 0); //get framebuffer & alignment (pointer, size)
-        idx = mbox_cmd32(idx, 0x40008, 1, 0, 0); //get pitch
-
-        mbox[idx] = MBOX_TAG_LAST;
+        size_t idx = mbox_start(35);
+        mbox_cmd(idx, 0x48003, 2, width, height); //set physical width & height
+        mbox_cmd(idx, 0x48004, 2, width, height); //set virtual width & height
+        mbox_cmd(idx, 0x48009, 2, 0, 0); //set virtual offset
+        mbox_cmd(idx, 0x48005, 1, 32, 0); //set depth
+        mbox_cmd(idx, 0x48006, 1, 1, 0); //set pixel order
+        mbox_cmd(idx, 0x40001, 2, 4096, 0); //get framebuffer & alignment (pointer, size)
+        mbox_cmd(idx, 0x40008, 1, 0, 0); //get pitch
+        mbox_end(idx);
 
         if(mbox_call(MBOX_CH_PROP) && mbox[20] == 32 && mbox[28]) {
                 this->_width  = mbox[5];

@@ -39,21 +39,13 @@ extern "C" void kmain(uint64_t /*dtb_ptr32*/,
         uart_init();
 
         // get the serial number with a mailbox call
-        mbox[0] = 8*4;                  // length of the message
-        mbox[1] = MBOX_REQUEST;
-
-        mbox[2] = MBOX_TAG_GETSERIAL;   // get serial number command
-        mbox[3] = 8;                    // buffer size
-        mbox[4] = 8;
-        mbox[5] = 0;                    // clear output buffer
-        mbox[6] = 0;
-
-        mbox[7] = MBOX_TAG_LAST;
+        size_t idx = mbox_start(8);
+        mbox_cmd(idx, MBOX_TAG_GETSERIAL, 2, 0, 0);
+        mbox_end(idx);
 
         // send the message to the GPU and receive answer
         if (mbox_call(MBOX_CH_PROP))
-                printf("My serial number is: "
-                       "%8x%8x\n", mbox[6], mbox[5]);
+                printf("My serial number is: %8x%8x\n", mbox[6], mbox[5]);
         else uart_puts("Unable to query serial!\n");
 
         srand();
