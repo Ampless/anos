@@ -36,6 +36,5 @@ _start:
         sub w2, w2, #1
         cbnz w2, 3b
 
-4:      mrs x1, ID_AA64MMFR0_EL1
-        bl kmain
+4:      bl kmain
         b 1b

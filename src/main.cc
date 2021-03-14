@@ -31,10 +31,7 @@
 #endif
 
 #ifdef ANOS_ARM64_RASPI
-extern "C" void kmain(uint64_t /*dtb_ptr32*/,
-                      uint64_t x1,
-                      uint64_t /*x2*/,
-                      uint64_t /*x3*/) {
+extern "C" void kmain() {
         uint64_t start = clock();
         uart_init();
 
@@ -51,25 +48,18 @@ extern "C" void kmain(uint64_t /*dtb_ptr32*/,
         srand();
         printf("Random number: %8x\n", rand());
 
-        uint32_t ass = x1 & 0xf;
-        uart_puts("physical address space: ");
-        if(ass <= 6)
-                printf("%d bits\n", 32 + (
-                       ass == 0 ? 0 :  ass == 1 ? 4 :
-                       ass == 2 ? 8 :  ass == 3 ? 10 :
-                       ass == 4 ? 12 : ass == 5 ? 16 : 20));
-        else uart_puts("unknown\n");
+        MemoryModel memmod;
+        printf("physical address space: %d bits\n", memmod.pa_range());
 
-        x1 >>= 20;
-        printf("16k granules %ssupported.\n", x1 & 0xf ? "" : "not ");
-        x1 >>= 4;
-        printf("64k granules %ssupported.\n", x1 & 0xf ? "not " : "");
-        x1 >>= 4;
-        printf("4k granules %ssupported.\n", x1 & 0xf ? "not " : "");
+        printf("4k granules %ssupported.\n", memmod.stage1_tgran4() ? "" : "not ");
+        printf("16k granules %ssupported.\n", memmod.stage1_tgran16() ? "" : "not ");
+        printf("64k granules %ssupported.\n", memmod.stage1_tgran64() ? "" : "not ");
 
+        //TODO: check why this was happening
         //i really want to get rid of this, but it seems like i forgot
         //to wait for sth in gpu ctor, because it segfaults in qemu
-        usleep(100000);
+        //doesnt seem to happen anymore
+        //usleep(10000);
 
         GPU gpu;
         assert(gpu.valid());
@@ -83,7 +73,7 @@ extern "C" void kmain(uint64_t /*dtb_ptr32*/,
         uint64_t end = clock();
 
         uart_puts("All of this took ");
-        printf("%d milliseconds.\n", (end - start) / 1000 - 100);
+        printf("%d milliseconds.\n", (end - start) / 1000);
 
         printf("Allocated 100B each @ %lx & %lx\n", kalloc(100), kalloc(100));
 
