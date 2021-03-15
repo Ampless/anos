@@ -1,20 +1,20 @@
-S {
-        !aarch64-none-elf-g++ -Isrc -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c src/raspi/boot.S -o src/raspi/boot.o
+boot {
+        !aarch64-none-elf-g++ -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c boot/raspi.S -o boot/raspi.o
 }
 
-cc {
+kernel {
         %SET CPPC aarch64-none-elf-g++
-        %APPEND CPPFLAGS -Wno-return-type -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c -Isrc
-        %CPPC src/main.o src/main.cc
-        %CPPC src/printf.o src/printf.cc
-        %CPPC src/pages.o src/pages.cc
-        %CPPC src/raspi/mbox.o src/raspi/mbox.cc
-        %CPPC src/raspi/gpu.o src/raspi/gpu.cc
-        %CPPC src/raspi/uart0.o src/raspi/uart0.cc
+        %APPEND CPPFLAGS -Wno-return-type -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c -Ikernel
+        %CPPC kernel/main.o kernel/main.cc
+        %CPPC kernel/printf.o kernel/printf.cc
+        %CPPC kernel/pages.o kernel/pages.cc
+        %CPPC kernel/raspi/mbox.o kernel/raspi/mbox.cc
+        %CPPC kernel/raspi/gpu.o kernel/raspi/gpu.cc
+        %CPPC kernel/raspi/uart0.o kernel/raspi/uart0.cc
 }
 
 link {
-        !aarch64-none-elf-ld -T src/raspi/linker.ld -o anos.elf src/*.o src/*/*.o
+        !aarch64-none-elf-ld -T boot/raspi.ld -o anos.elf boot/raspi.o kernel/*.o kernel/*/*.o
 }
 
 objcopy {
@@ -22,16 +22,14 @@ objcopy {
 }
 
 clean {
-        !rm -f anos.elf src/*.o src/*/*.o tooling/image2rle tooling/bin2arr
+        !rm -f anos.elf kernel/*.o kernel/*/*.o tooling/image2rle tooling/bin2arr
 }
 
-elf (S cc link) {}
+elf (boot kernel link) {}
 img (elf objcopy) {}
 all (img clean) {}
 
 test (all) {
-        # Currently the display is disabled, but once we have a UI,
-        # we might want to re-enable it.
         # Append -s and -S to be able to use gdb
         !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img
 }
