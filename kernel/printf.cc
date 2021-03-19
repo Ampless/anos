@@ -2,7 +2,8 @@
 #include <stdarg.h>
 
 namespace {
-        inline uint32_t rprintf(void(*putc)(int),
+        const inline uint32_t rprintf(void(*putc)(int, char *&),
+                                char *dst,
                                 const char *fmt,
                                 va_list args) {
                 if(!fmt || !putc) return 0;
@@ -28,7 +29,7 @@ namespace {
                                 // character
                                 if(*fmt=='c') {
                                         arg = va_arg(args, int);
-                                        putc(arg);
+                                        putc(arg, dst);
                                         count++;
                                         fmt++;
                                         continue;
@@ -71,28 +72,24 @@ namespace {
                                         p = va_arg(args, char*);
 cpystr:
                                         if(!p) p = (char *) "(null)";
-                                        while(*p) putc(*p++), count++;
+                                        while(*p) putc(*p++, dst), count++;
                                 }
                         } else
-                                put:
-                                        putc(*fmt), count++;
+put:
+                                putc(*fmt, dst), count++;
                         fmt++;
                 }
-                putc('\0');
+                putc('\0', dst);
                 return count;
         }
 }
-
-//this is not thread safe and a horrible hack
-//TODO: some way to do this better
-char *sprintf_dst;
 
 uint32_t sprintf(char *dst, const char *fmt, ...) {
         if(!dst) return 0;
         va_list args;
         va_start(args, fmt);
-        sprintf_dst = dst;
-        uint32_t ret = rprintf([](int c) { *sprintf_dst++ = c; }, fmt, args);
+        const auto rputc = [](int c, char *&dst) { *dst++ = c; };
+        uint32_t ret = rprintf(rputc, dst, fmt, args);
         va_end(args);
         return ret;
 }
@@ -100,7 +97,8 @@ uint32_t sprintf(char *dst, const char *fmt, ...) {
 uint32_t printf(const char *fmt, ...) {
         va_list args;
         va_start(args, fmt);
-        uint32_t ret = rprintf(&putc, fmt, args);
+        const auto rputc = [](int c, char *&) { putc(c); };
+        uint32_t ret = rprintf(rputc, nullptr, fmt, args);
         va_end(args);
         return ret;
 }
