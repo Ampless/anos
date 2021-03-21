@@ -19,7 +19,6 @@ inline bool k_pages_viable(size_t first, size_t count) {
         return true;
 }
 
-// TODO: initialize to zero, because obviously that is the right thing to do
 inline void *k_pages_alloc_unchecked(size_t first, size_t count) {
         for(size_t i = first; i < first + count - 1; i++) {
                 pages[i].allocated = true;

@@ -55,6 +55,8 @@ extern "C" void kmain() {
         printf("16k granules %ssupported.\n", memmod.stage1_tgran16() ? "" : "not ");
         printf("64k granules %ssupported.\n", memmod.stage1_tgran64() ? "" : "not ");
 
+        printf("CPU frequency: %d\n", cpufrequency());
+
         //TODO: check why this was happening
         //i really want to get rid of this, but it seems like i forgot
         //to wait for sth in gpu ctor, because it segfaults in qemu
@@ -77,6 +79,7 @@ extern "C" void kmain() {
 
         printf("Allocated 100B each @ %lx & %lx\n", kalloc(100), kalloc(100));
 
+        spinwhile(1);
         shutdown(false);
 }
 #endif

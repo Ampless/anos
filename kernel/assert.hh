@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifdef ANOS_NODEBUG
 # define assert(expr)
 #else
@@ -18,9 +17,6 @@ namespace {
         }
 }
 
-# define assert(expr) (static_cast<bool>(expr) ? (void)(0) \
-                : _assert_fail (#expr, __FILE__, __LINE__, ASSERT_FUNCTION))
-
 # ifdef __PRETTY_FUNCTION__
 // __PRETTY_FUNCTION__ is a GNU extension, which is a bit nicer than
 // C's __func__.
@@ -28,4 +24,7 @@ namespace {
 # else
 #  define ASSERT_FUNCTION __func__
 # endif
+
+# define assert(expr) (static_cast<bool>(expr) ? (void)(0) \
+                : _assert_fail (#expr, __FILE__, __LINE__, ASSERT_FUNCTION))
 #endif

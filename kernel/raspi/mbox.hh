@@ -38,28 +38,26 @@ extern volatile uint32_t mbox[36];
 bool mbox_call(const char channel);
 
 namespace {
+        static constexpr inline size_t mbox_start(size_t len) {
+                mbox[0] = len * sizeof(uint32_t);
+                mbox[1] = MBOX_REQUEST;
+                return 2;
+        }
 
-static constexpr inline size_t mbox_start(size_t len) {
-        mbox[0] = len * sizeof(uint32_t);
-        mbox[1] = MBOX_REQUEST;
-        return 2;
-}
+        static constexpr inline void mbox_cmd(size_t        &idx,
+                                              const uint32_t cmd,
+                                              const uint32_t len,
+                                              const uint32_t arg1,
+                                              const uint32_t arg2) {
+                //static_assert(len == 1 || len == 2);
+                mbox[idx++] = cmd;
+                mbox[idx++] = len * sizeof(uint32_t);
+                mbox[idx++] = len * sizeof(uint32_t);
+                mbox[idx++] = arg1;
+                if(len == 2) mbox[idx++] = arg2;
+        }
 
-static constexpr inline void mbox_cmd(size_t        &idx,
-                                      const uint32_t cmd,
-                                      const uint32_t len,
-                                      const uint32_t arg1,
-                                      const uint32_t arg2) {
-        //static_assert(len == 1 || len == 2);
-        mbox[idx++] = cmd;
-        mbox[idx++] = len * sizeof(uint32_t);
-        mbox[idx++] = len * sizeof(uint32_t);
-        mbox[idx++] = arg1;
-        if(len == 2) mbox[idx++] = arg2;
-}
-
-static constexpr inline void mbox_end(size_t &idx) {
-        mbox[idx++] = MBOX_TAG_LAST;
-}
-
+        static constexpr inline void mbox_end(size_t &idx) {
+                mbox[idx++] = MBOX_TAG_LAST;
+        }
 }

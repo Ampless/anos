@@ -20,11 +20,14 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
                 this->_height = mbox[6];
                 pitch = mbox[33]; //number of bytes per line
                 //TODO: print err
-                if(!mbox[24]) return; //BGR is an error.
+                if(!mbox[24]) {
+                        uart_puts("BGR is an error.\n");
+                        return;
+                }
                 //                  GPU has different addrs, idk
                 buffer=(uint8_t *)((uintptr_t)mbox[28] & 0x3FFFFFFF);
                 this->_valid = true;
-        } else uart_puts("Can't set screen res (TODO: print res)\n");
+        } else uart_puts("Can't set screen res\n");
 }
 
 #include <raspi/demoimage/demoimage.h>
