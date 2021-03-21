@@ -67,11 +67,15 @@ namespace {
                 spinwhile(clock() < t);
         }
         inline uint64_t rdtsc() {
-                asm volatile ("isb; mrs x0, cntvct_el0");
+                uint64_t i;
+                asm volatile("isb; mrs %0, cntvct_el0" : "=r" (i));
+                return i;
         }
         // NOTE: this is not always accurate
-        inline uint64_t cpufrequency() {
-                asm volatile ("isb; mrs x0, cntfrq_el0");
+        inline uint32_t cpufrequency() {
+                uint64_t i;
+                asm volatile("isb; mrs %0, cntfrq_el0" : "=r" (i));
+                return i & 0xffffffff;
         }
         inline void abort() {
                 shutdown(false);
