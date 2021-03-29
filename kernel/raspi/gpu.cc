@@ -19,7 +19,6 @@ GPU::GPU(uint32_t width, uint32_t height) noexcept {
                 this->_width  = mbox[5];
                 this->_height = mbox[6];
                 pitch = mbox[33]; //number of bytes per line
-                //TODO: print err
                 if(!mbox[24]) {
                         uart_puts("BGR is an error.\n");
                         return;

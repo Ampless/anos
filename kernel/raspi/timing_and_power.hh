@@ -22,7 +22,7 @@ namespace {
                 //  is for, and using it seems fine to me)
                 asm volatile("yield" ::: "memory");
         }
-        inline void spincycles(uint64_t n) {
+        constexpr static inline void spincycles(uint64_t n) {
                 spinwhile(n--);
         }
         void shutdown(bool restart) {
@@ -58,26 +58,15 @@ namespace {
 }
 
 namespace {
-        inline uint64_t clock() {
+        static inline uint64_t clock() {
                 return ((uint64_t) SYSTMR_HI << 32) | SYSTMR_LO;
         }
-        inline void usleep(uint64_t n) {
+        static inline void usleep(uint64_t n) {
                 uint64_t t = clock() + n;
                 if(t == n) return;
                 spinwhile(clock() < t);
         }
-        inline uint64_t rdtsc() {
-                uint64_t i;
-                asm volatile("isb; mrs %0, cntvct_el0" : "=r" (i));
-                return i;
-        }
-        // NOTE: this is not always accurate
-        inline uint32_t cpufrequency() {
-                uint64_t i;
-                asm volatile("isb; mrs %0, cntfrq_el0" : "=r" (i));
-                return i & 0xffffffff;
-        }
-        inline void abort() {
+        static inline void abort() {
                 shutdown(false);
         }
 }

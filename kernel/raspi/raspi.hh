@@ -5,4 +5,4 @@
 #include <raspi/uart0.hh>
 #include <raspi/rand.hh>
 #include <raspi/gpu.hh>
-#include <raspi/features.hh>
+#include <raspi/hwinfo.hh>

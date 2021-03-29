@@ -40,9 +40,9 @@ void uart_init() {
         GPFSEL1 = r;
         GPPUD = 0;            // enable pins 14 and 15
         //weirdest timing hack ever TODO: cleanup
-        r=150; while(r--) { asm volatile("nop"); }
+        spincycles(150);
         GPPUDCLK0 = (1<<14)|(1<<15);
-        r=150; while(r--) { asm volatile("nop"); }
+        spincycles(150);
         GPPUDCLK0 = 0;        // flush GPIO setup
 
         UART0_ICR = 0x7FF;    // clear interrupts

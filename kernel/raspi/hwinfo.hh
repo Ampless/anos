@@ -1,13 +1,16 @@
 #pragma once
 #include <stdint.h>
 
+//TODO: read a lot of docs and figure out wheather the isb is actually needed
+#define mrs_to_var(reg, var) asm volatile("isb; mrs %0, " reg : "=r" (var))
+
 class MemoryModel {
 private:
         uint64_t mmfr0, mmfr1;
 public:
         inline MemoryModel() noexcept {
-                asm("mrs %0, ID_AA64MMFR0_EL1" : "=r" (mmfr0));
-                asm("mrs %0, ID_AA64MMFR1_EL1" : "=r" (mmfr1));
+                mrs_to_var("ID_AA64MMFR0_EL1", mmfr0);
+                mrs_to_var("ID_AA64MMFR1_EL1", mmfr1);
         }
 
         // https://developer.arm.com/documentation/ddi0595/2020-12/AArch64-Registers/ID-AA64MMFR0-EL1--AArch64-Memory-Model-Feature-Register-0
@@ -63,3 +66,18 @@ public:
 
         //TODO: other registers
 };
+
+namespace {
+        static inline uint64_t rdtsc() {
+                uint64_t i;
+                mrs_to_var("CNTVCT_EL0", i);
+                return i;
+        }
+
+        // NOTE: this is not always accurate
+        static inline uint32_t cpufrequency() {
+                uint64_t i;
+                mrs_to_var("CNTFRQ_EL0", i);
+                return i & 0xffffffff;
+        }
+}
