@@ -1,9 +1,9 @@
 raspi {
-        !docker build raspi -t raspi-buildenv
-        !docker run --rm -it -v $(dirname $PWD):/root/anos raspi-buildenv
+        !docker build raspi -t anos-raspi-buildenv
+        !docker run --rm -it -v $(dirname $PWD):/anos anos-raspi-buildenv
 }
 
 pc {
-        !docker build pc -t pc-buildenv
-        !docker run --rm -it -v $(dirname $PWD):/root/anos pc-buildenv
+        !docker build pc -t anos-pc-buildenv
+        !docker run --rm -it -v $(dirname $PWD):/anos anos-pc-buildenv
 }
