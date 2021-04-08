@@ -29,6 +29,10 @@ elf (boot kernel link) {}
 img (elf objcopy) {}
 all (img clean) {}
 
+format {
+        !clang-format -Werror -i --style=file --verbose kernel/*.cc kernel/*.hh kernel/*.c kernel/*.h kernel/*/*.cc kernel/*/*.hh kernel/*/*.c kernel/*/*.h
+}
+
 test (all) {
         # Append -s and -S to be able to use gdb
         !qemu-system-aarch64 -M raspi3 -serial stdio -kernel kernel8.img

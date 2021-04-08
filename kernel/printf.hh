@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-//TODO: make portable
+// TODO: make portable
 #include <raspi/uart0.hh>
 #define putc uart_putc
 
