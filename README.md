@@ -18,15 +18,20 @@ Rust is a good programming language, but redoxOS already exists.
 ## TODO
 anOS already does some great things, but there's still a lot to do:
 
-### Kernel
-* Memory Management, obviously
 * Some File System (maybe custom, IDK)
+* `aport` on macOS and Linux
+* Memory Management, obviously
 * Processes, System Calls, IPC
-
-### Userspace
-* `aport`
-* Ports for `zsh`, `vim`, maybe some compiler, ...
+* Port a C library (probably `dietlibc`) and
+compiler (`clang`, `gcc`, `lcc`, ...)
+* `aport` on anOS
+* Port a shell (`ash`, `dash`, `ksh`, ...) and
+editor (`nano`, `ed`, `that_editor`, ...)
+* Port `zsh` and `vim`
+* A temporary unstable API for full-screen graphics from Userspace
+* Port `genericdoom`
 * Display Server, Window Manager, SDL port
-* Ports for that\_terminal, Emacs, some browser (maybe surf), 90s games, ...
+* Port apps (`that_terminal`, Emacs, some browser (maybe surf), 90s games, ...)
 * Networking
 * Sound
+* x86/RISC-V/...
