@@ -24,7 +24,7 @@ inline void cpu_relax() {
         asm volatile("yield" ::: "memory");
 }
 constexpr static inline void spincycles(uint64_t n) { spinwhile(n--); }
-void                         shutdown(bool restart) {
+static inline void           shutdown(bool restart) {
         if(!restart) {
                 for(uint32_t i = 0; i < 16; i++) {
                         size_t idx = mbox_start(8);

@@ -1,10 +1,8 @@
-#include "uart0.hh"
-
-#include "../assert.hh"
-#include "../mem.hh"
-#include "mbox.hh"
-#include "mmio.hh"
-#include "timing_and_power.hh"
+#include <mem.hh>
+#include <raspi/mbox.hh>
+#include <raspi/mmio.hh>
+#include <raspi/timing_and_power.hh>
+#include <raspi/uart0.hh>
 
 // PL011 UART registers
 #define UART0_DR   mem(MMIO_BASE + 0x00201000)
