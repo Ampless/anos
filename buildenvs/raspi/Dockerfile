@@ -1,7 +1,5 @@
 FROM chrissx/gcc-aarch64-none-elf:10.2
 
-RUN apt update
-RUN apt upgrade -y
 RUN apt install -y curl git gcc xz-utils
 RUN curl -L https://github.com/chrissxYT/tools/raw/master/bootstrap | sh
 
