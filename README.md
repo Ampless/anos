@@ -31,7 +31,9 @@ editor (`nano`, `ed`, `that_editor`, ...)
 * A temporary unstable API for full-screen graphics from Userspace
 * Port `genericdoom`
 * Display Server, Window Manager, SDL port
-* Port apps (`that_terminal`, Emacs, some browser (maybe surf), 90s games, ...)
+* Port modern programming languages (Dart (+ Flutter), Go, Rust, ...) and
+apps (`that_terminal`, Emacs, some browser (maybe surf), 90s games, ...)
 * Networking
 * Sound
+* SMP
 * x86/RISC-V/...
