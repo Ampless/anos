@@ -11,17 +11,17 @@ public:
         // Show the #included picture (temporary)
         void showdemopicture() noexcept;
 
-        constexpr inline bool     valid() noexcept { return _valid; }
-        constexpr inline uint32_t width() noexcept { return _width; }
-        constexpr inline uint32_t height() noexcept { return _height; }
-        inline uint32_t &         pixel(uint32_t x, uint32_t y) noexcept {
+        constexpr inline bool     valid() const { return _valid; }
+        constexpr inline uint32_t width() const { return _width; }
+        constexpr inline uint32_t height() const { return _height; }
+        inline uint32_t &         pixel(uint32_t x, uint32_t y) const {
                 return *(uint32_t *)&buffer[y * pitch + x * 4];
         }
         inline void draw_picture(uint32_t (*f)(uint32_t, uint32_t),
                                  uint32_t width    = 0,
                                  uint32_t height   = 0,
                                  uint32_t offset_x = 0,
-                                 uint32_t offset_y = 0) noexcept {
+                                 uint32_t offset_y = 0) {
                 if(width == 0) width = _width;
                 if(height == 0) height = _height;
                 for(uint32_t y = 0; y < height; y++) {

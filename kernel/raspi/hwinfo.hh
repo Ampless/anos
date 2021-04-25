@@ -16,51 +16,47 @@ public:
 
         // https://developer.arm.com/documentation/ddi0595/2020-12/AArch64-Registers/ID-AA64MMFR0-EL1--AArch64-Memory-Model-Feature-Register-0
 
-        constexpr inline bool ecv() noexcept { return (mmfr0 >> 60) & 3; }
-        constexpr inline bool fgt() noexcept { return ((mmfr0 >> 56) & 0xf) == 1; }
-        constexpr inline bool exs() noexcept { return ((mmfr0 >> 44) & 0xf) == 1; }
+        constexpr inline bool ecv() const { return (mmfr0 >> 60) & 3; }
+        constexpr inline bool fgt() const { return ((mmfr0 >> 56) & 0xf) == 1; }
+        constexpr inline bool exs() const { return ((mmfr0 >> 44) & 0xf) == 1; }
 
-        constexpr inline bool stage1_tgran4() noexcept {
-                return ((mmfr0 >> 28) & 0xe) == 0;
-        }
-        constexpr inline bool stage1_tgran16() noexcept {
+        constexpr inline bool stage1_tgran4() const { return ((mmfr0 >> 28) & 0xe) == 0; }
+        constexpr inline bool stage1_tgran16() const {
                 uint32_t i = (mmfr0 >> 20) & 0xf;
                 return i == 1 || i == 2;
         }
-        constexpr inline bool stage1_tgran64() noexcept {
+        constexpr inline bool stage1_tgran64() const {
                 return ((mmfr0 >> 24) & 0xf) == 0;
         }
 
-        constexpr inline bool stage2_tgran4() noexcept {
+        constexpr inline bool stage2_tgran4() const {
                 uint32_t i = (mmfr0 >> 40) & 0xf;
                 if(i == 0) return stage1_tgran4();
                 return (i & 2) == 2;
         }
-        constexpr inline bool stage2_tgran16() noexcept {
+        constexpr inline bool stage2_tgran16() const {
                 uint32_t i = (mmfr0 >> 32) & 0xf;
                 if(i == 0) return stage1_tgran16();
                 return (i & 2) == 2;
         }
-        constexpr inline bool stage2_tgran64() noexcept {
+        constexpr inline bool stage2_tgran64() const {
                 uint32_t i = (mmfr0 >> 36) & 0xf;
                 if(i == 0) return stage1_tgran64();
                 return i == 2;
         }
 
-        constexpr inline bool mixed_endian() noexcept {
-                return ((mmfr0 >> 8) & 0xf) == 1;
-        }
-        constexpr inline bool sns_mem() noexcept { return ((mmfr0 >> 12) & 0xf) == 1; }
-        constexpr inline bool mixed_endian_el0() noexcept {
+        constexpr inline bool mixed_endian() const { return ((mmfr0 >> 8) & 0xf) == 1; }
+        constexpr inline bool sns_mem() const { return ((mmfr0 >> 12) & 0xf) == 1; }
+        constexpr inline bool mixed_endian_el0() const {
                 return mixed_endian() || ((mmfr0 >> 16) & 0xf) == 1;
         }
-        constexpr inline int32_t asid_bits() noexcept {
+        constexpr inline int32_t asid_bits() const {
                 uint32_t i = (mmfr0 >> 4) & 0xf;
                 if(i == 0) return 8;
                 if(i == 2) return 16;
                 return -1;
         }
-        constexpr inline int32_t pa_range() noexcept {
+        constexpr inline int32_t pa_range() const {
                 switch(mmfr0 & 0xf) {
                         case 0: return 32;
                         case 1: return 36;

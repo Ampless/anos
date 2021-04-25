@@ -37,14 +37,16 @@ extern volatile uint32_t mbox[36];
 
 namespace {
 static inline bool mbox_call(const char ch) {
-        //static_assert(ch < 0x10);
-        //static_assert((((uintptr_t)&mbox) & 0xffffffff0000000f) == 0);
+        // static_assert(ch < 0x10);
+        // static_assert((((uintptr_t)&mbox) & 0xffffffff0000000f) == 0);
         uint32_t r = (((uint32_t)(uintptr_t)&mbox) | ch);
-        //TODO: reorganise some code to allow using spinwhile here again
-        while(MBOX_STATUS & MBOX_FULL);
+        // TODO: reorganise some code to allow using spinwhile here again
+        while(MBOX_STATUS & MBOX_FULL)
+                ;
         MBOX_WRITE = r;
         while(1) {
-                while(MBOX_STATUS & MBOX_EMPTY);
+                while(MBOX_STATUS & MBOX_EMPTY)
+                        ;
                 if(r == MBOX_READ) return mbox[1] == MBOX_RESPONSE;
         }
 }
@@ -59,7 +61,7 @@ static constexpr inline void mbox_cmd(size_t &       idx,
                                       const uint32_t len,
                                       const uint32_t arg1,
                                       const uint32_t arg2) {
-        //static_assert(len == 1 || len == 2);
+        // static_assert(len == 1 || len == 2);
         mbox[idx++] = cmd;
         mbox[idx++] = len * sizeof(uint32_t);
         mbox[idx++] = len * sizeof(uint32_t);
