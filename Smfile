@@ -11,6 +11,8 @@ kernel {
         %CPPC kernel/raspi/mbox.o kernel/raspi/mbox.cc
         %CPPC kernel/raspi/gpu.o kernel/raspi/gpu.cc
         %CPPC kernel/raspi/uart0.o kernel/raspi/uart0.cc
+        # this is only for testing, TODO: remove
+        %CPPC fs/afs.o fs/afs.hh
 }
 
 link {
@@ -22,7 +24,7 @@ objcopy {
 }
 
 clean {
-        !rm -f anos.elf kernel/*.o kernel/*/*.o tooling/image2rle tooling/bin2arr
+        !rm -f anos.elf kernel/*.o kernel/*/*.o
 }
 
 elf (boot kernel link) {}
@@ -30,7 +32,11 @@ img (elf objcopy) {}
 all (img clean) {}
 
 format {
-        !clang-format -Werror -i --style=file --verbose kernel/*.cc kernel/*.hh kernel/*.c kernel/*.h kernel/*/*.cc kernel/*/*.hh kernel/*/*.c kernel/*/*.h
+        !clang-format -Werror -i --style=file --verbose */*.cc */*.hh */*.c */*.h */*/*.cc */*/*.hh */*/*.c */*/*.h
+}
+
+loc {
+        !cloc --exclude-dir=demoimage .
 }
 
 test (all) {
