@@ -1,11 +1,9 @@
 raspi {
-        !docker pull chrissx/gcc-aarch64-none-elf:10.2
-        !docker build raspi -t anos-raspi-buildenv
+        !docker build . -f raspi.Dockerfile -t anos-raspi-buildenv
         !docker run --rm -it -v $(dirname $PWD):/anos anos-raspi-buildenv
 }
 
 pc {
-        !docker pull chrissx/gcc-x86_64-none-elf:10.2
-        !docker build pc -t anos-pc-buildenv
+        !docker build . pc.Dockerfile -t anos-pc-buildenv
         !docker run --rm -it -v $(dirname $PWD):/anos anos-pc-buildenv
 }
