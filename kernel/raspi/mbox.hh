@@ -50,10 +50,12 @@ static inline bool mbox_call(const char ch) {
                 if(r == MBOX_READ) return mbox[1] == MBOX_RESPONSE;
         }
 }
+
 static constexpr inline size_t mbox_start(size_t len) {
-        mbox[0] = len * sizeof(uint32_t);
-        mbox[1] = MBOX_REQUEST;
-        return 2;
+        size_t idx  = 0;
+        mbox[idx++] = len * sizeof(uint32_t);
+        mbox[idx++] = MBOX_REQUEST;
+        return idx;
 }
 
 static constexpr inline void mbox_cmd(size_t &       idx,

@@ -2,10 +2,10 @@
 #include <stdarg.h>
 
 namespace {
-const inline uint32_t rprintf(void (*putc)(int, char *&),
-                              char *      dst,
-                              const char *fmt,
-                              va_list     args) {
+inline uint32_t rprintf(void (*putc)(int, char *&),
+                        char *      dst,
+                        const char *fmt,
+                        va_list     args) {
         if(!fmt || !putc) return 0;
         uint32_t count = 0;
         int64_t  arg   = 0;
