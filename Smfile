@@ -4,15 +4,13 @@ boot {
 
 kernel {
         %SET CPPC aarch64-none-elf-g++
-        %APPEND CPPFLAGS -Wno-return-type -Wno-ignored-qualifiers -Wno-unused-function -fno-exceptions -ffreestanding -nostdinc -nostdinc++ -nostdlib -nostartfiles -c -Ikernel
+        %APPEND CPPFLAGS -Wno-unused-function -fno-exceptions -ffreestanding -nostartfiles -c -Ikernel
         %CPPC kernel/main.o kernel/main.cc
         %CPPC kernel/printf.o kernel/printf.cc
         %CPPC kernel/pages.o kernel/pages.cc
         %CPPC kernel/raspi/mbox.o kernel/raspi/mbox.cc
         %CPPC kernel/raspi/gpu.o kernel/raspi/gpu.cc
         %CPPC kernel/raspi/uart0.o kernel/raspi/uart0.cc
-        # this is only for testing, TODO: remove
-        %CPPC fs/afs.o fs/afs.hh
 }
 
 link {
