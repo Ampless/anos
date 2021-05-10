@@ -15,10 +15,10 @@ ANother Operating System, currently only designed to run on RasPi 3 and 4
 ## Why not Rust?
 Rust is a good programming language, but redoxOS already exists.
 
-## TODO
+## TODO / Roadmap
 anOS already does some great things, but there's still a lot to do:
 
-* Some File System (maybe custom, IDK)
+* Some File System (probably [FAT](https://github.com/Ampless/afat))
 * `aport` on macOS and Linux
 * Memory Management, obviously
 * Processes, System Calls, IPC
@@ -27,6 +27,8 @@ compiler (`clang`, `gcc`, `lcc`, ...)
 * `aport` on anOS
 * Port a shell (`ash`, `dash`, `ksh`, ...) and
 editor (`nano`, `ed`, `that_editor`, ...)
+* Port [`doas`](https://github.com/Ampless/doas), instead of reinventing the
+wheel with `peb`
 * Port `zsh` and `vim`
 * A temporary unstable API for full-screen graphics from Userspace
 * Port `genericdoom`
