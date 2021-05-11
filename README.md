@@ -1,4 +1,6 @@
 # anOS
+**Deprecated in favor of [AmplOS2/AmplOS2](https://github.com/AmplOS2/AmplOS2)**
+
 ANother Operating System, currently only designed to run on RasPi 3 and 4
 (when the 5 comes out we will support it fairly quickly). x86/… support is
 "planned" (writing the boot code for raspis was already tricky enough).
