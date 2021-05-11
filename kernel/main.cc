@@ -19,6 +19,7 @@
 #endif
 
 #ifdef ANOS_ARM64_RASPI
+uint8_t         f = 1;
 extern "C" void kmain() {
         uint64_t start = clock();
         uart_init();
@@ -46,28 +47,28 @@ extern "C" void kmain() {
 
         printf("CPU frequency: %dMHz\n", cpufrequency() / 1000000);
 
-        // TODO: check why this was happening
-        // i really want to get rid of this, but it seems like i forgot
-        // to wait for sth in gpu ctor, because it segfaults in qemu
-        // doesnt seem to happen anymore
-        // usleep(10000);
-
         GPU gpu;
         assert(gpu.valid());
 
-        gpu.draw_picture([](uint32_t x, uint32_t y) {
-                return rgba(x | rand(), y | rand(), (x ^ y) | rand(), 0xff);
-        });
-
+        gpu.draw_picture([](uint32_t x, uint32_t y) { return rgba(x, y, x ^ y, 0xff); });
         gpu.showdemopicture();
 
         uint64_t end = clock();
 
         uart_puts("All of this took ");
-        printf("%d milliseconds.\n", (end - start) / 1000);
+        printf("%d microseconds.\n", end - start);
 
         printf("Allocated 100B each @ %lx & %lx\n", kalloc(100), kalloc(100));
 
-        shutdown(false);
+        for(;;) {
+                usleep(3000000);
+                gpu.draw_picture([](uint32_t x, uint32_t y) {
+                        return rgba(x, y, x ^ y, 0xff) ^
+                               rgba(rand() & f, rand() & f, rand() & f, 0);
+                });
+                if(f == 0xff) f = 1;
+                f <<= 1;
+                f |= 1;
+        }
 }
 #endif

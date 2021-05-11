@@ -8,7 +8,7 @@ private:
         uint8_t *buffer;
 
 public:
-        // Show the #included picture (temporary)
+        // Show the #included pictures (temporary)
         void showdemopicture() noexcept;
 
         constexpr inline bool     valid() const { return _valid; }
